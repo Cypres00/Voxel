@@ -54,13 +54,13 @@
   #carnet {
     position: absolute; z-index: 1; top: 26px; right: 100%;
     width: 128px; height: 162px;
-    transform: translateX(108px) rotate(-3deg);
+    transform: translateX(108px);
     transition: transform .35s cubic-bezier(.3,1.3,.5,1), width .3s ease, height .3s ease;
     cursor: pointer; --main: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
   }
   #inventaire.ouvert #carnet { pointer-events: auto; }
-  #carnet:hover { transform: translateX(30px) rotate(-5deg); }
-  #carnet.ouvert { transform: translateX(-12px) rotate(0deg); width: 236px; height: 330px; cursor: default; }
+  #carnet:hover { transform: translateX(30px); }
+  #carnet.ouvert { transform: translateX(-12px); z-index: 3; width: 236px; height: 330px; cursor: default; }
   #carnet .couverture {
     position: absolute; inset: 0; border-radius: 6px 13px 13px 6px; overflow: hidden;
     background:
@@ -92,9 +92,22 @@
     padding: 12px 12px 10px 22px; font-family: var(--main); color: #5a3420;
   }
   #carnet .pages::before { content: ""; position: absolute; top: 0; bottom: 0; left: 16px; width: 1px; background: rgba(220,90,80,0.45); }
+  #carnet .onglets { display: flex; gap: 4px; margin: 0 0 4px; }
+  #carnet .onglets button { border: 0; cursor: pointer; padding: 3px 9px 4px; border-radius: 8px 8px 2px 2px; background: rgba(214,160,104,0.25);
+    font: 700 14px/1.1 var(--main); color: #8a5a3a; box-shadow: inset 0 -2px 0 rgba(110,63,34,0.2); }
+  #carnet .onglets button.actif { background: #fff6e2; color: #6e3f22; box-shadow: inset 0 0 0 1.5px rgba(110,63,34,0.45), 0 -1px 0 #fff; }
+  #carnetIndices { position: absolute; top: 46px; left: 20px; right: 8px; bottom: 10px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: #c9a27a transparent; }
+  #carnetIndices .vide { margin: 4px 0; font: 13px/22px var(--main); color: #8a6a52; }
+  #carnetIndices .fiche { margin-bottom: 8px; padding: 3px 4px; border-radius: 6px; }
+  #carnetIndices .fiche.neuve { animation: neuve 2.6s ease-out; }
+  #carnetIndices .titreF { display: flex; align-items: center; gap: 6px; font: 700 14px/1.2 var(--main); color: #6e3f22; }
+  #carnetIndices .titreF img { width: 26px; height: 26px; object-fit: contain; }
+  #carnetIndices ul { margin: 2px 0 0; padding-left: 16px; }
+  #carnetIndices li { font: 12.5px/19px var(--main); color: #5a3420; }
+  #carnetIndices li::marker { content: "✎ "; color: #c0703a; }
   #carnet .pages h3 { margin: 0 0 6px; font: 700 17px/1.3 var(--main); color: #6e3f22; }
   #carnet .pages h3::after { content: ""; display: block; width: 70px; height: 3px; margin-top: 1px; border-radius: 2px; background: rgba(217,80,46,0.5); transform: rotate(-1.5deg); }
-  #carnetListe { position: absolute; top: 50px; left: 20px; right: 8px; bottom: 10px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: #c9a27a transparent; }
+  #carnetListe { position: absolute; top: 46px; left: 20px; right: 8px; bottom: 10px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: #c9a27a transparent; }
   #carnetListe .vide { margin: 4px 0; font: 13px/22px var(--main); color: #8a6a52; }
   #carnetListe .recette { padding: 3px 4px 4px; margin-bottom: 4px; border-radius: 6px; }
   #carnetListe .recette.neuve { animation: neuve 2.2s ease-out; }
@@ -113,6 +126,37 @@
     background: #d9502e; color: #fff6e6; font: 800 15px/1 Nunito, system-ui, sans-serif; box-shadow: 0 2px 0 #8a2f1a; }
   #carnet.ouvert .couverture, #carnet.ouvert .elastique, #carnet.ouvert .signet { opacity: 0; }
   #carnet.ouvert .pages { opacity: 1; }
+  /* Observation : petite boîte rangée sous le carnet ; on y glisse un objet à examiner */
+  #etude {
+    position: absolute; z-index: 1; top: 200px; right: 100%;
+    width: 128px; height: 96px; transform: translateX(108px);
+    transition: transform .35s cubic-bezier(.3,1.3,.5,1), width .3s ease, height .3s ease;
+    cursor: pointer; --main: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  }
+  #inventaire.ouvert #etude { pointer-events: auto; }
+  #etude:hover { transform: translateX(30px); }
+  #etude.ouvert { transform: translateX(-12px); width: 236px; height: 214px; cursor: default; z-index: 2; }
+  #carnet.ouvert ~ #etude { opacity: 0; pointer-events: none; }
+  #etude .couv { position: absolute; inset: 0; border-radius: 6px 13px 13px 6px; transition: opacity .25s;
+    background: radial-gradient(110% 80% at 30% 20%, rgba(255,255,255,0.35), transparent 60%),
+      repeating-linear-gradient(90deg, rgba(90,60,30,0.07) 0 3px, transparent 3px 7px), linear-gradient(160deg, #8fae6a, #6b8c4c);
+    box-shadow: inset 0 0 0 2px #2f4420, inset 4px 0 0 rgba(255,255,255,0.15), 0 8px 16px rgba(30,50,20,0.3), 2px 3px 0 #e9dcc0, 3px 5px 0 #2f4420; }
+  #etude .couv::before { content: ""; position: absolute; inset: 6px 8px 6px 6px; border-radius: 4px 9px 9px 4px; border: 1.6px dashed rgba(240,255,220,0.55); }
+  #etude .couv svg { position: absolute; left: 50%; top: 12px; width: 46px; height: 46px; transform: translateX(-50%); }
+  #etude .couv span { position: absolute; left: 0; right: 0; bottom: 12px; text-align: center; font: 700 13px/1 var(--main); color: #f4ffe6; text-shadow: 0 -1px 0 rgba(20,40,10,0.6); }
+  #etude .dedans { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .25s .1s; border-radius: 6px 12px 12px 6px;
+    background: radial-gradient(130% 90% at 50% 0%, #fffaf0, #f2ecd6); box-shadow: inset 0 0 0 2px #4f6b38, 0 0 0 4px #6b8c4c, 0 0 0 5.5px #2f4420, 0 10px 18px rgba(30,50,20,0.3);
+    padding: 10px 12px; font-family: var(--main); color: #3f5228; }
+  #etude.ouvert .couv { opacity: 0; }
+  #etude.ouvert .dedans { opacity: 1; visibility: visible; }
+  #etude h3 { margin: 0 0 6px; font: 700 17px/1.3 var(--main); color: #3f5228; }
+  #etude .fermer { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border: 0; border-radius: 50%; cursor: pointer;
+    background: #6b8c4c; color: #fff; font: 800 15px/1 Nunito, system-ui, sans-serif; box-shadow: 0 2px 0 #2f4420; }
+  #etudeCase { margin: 4px auto 6px; width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center; text-align: center;
+    background: radial-gradient(circle at 40% 35%, #ffffff, #e8eedb 70%); box-shadow: inset 0 0 0 3px #a9bf8c, inset 0 0 0 6px #fff, 0 3px 0 #c9d7b4;
+    font: 11px/14px var(--main); color: #7d8f66; padding: 10px; box-sizing: border-box; }
+  #etudeCase.survol { box-shadow: inset 0 0 0 3px #f2b134, inset 0 0 0 6px #fff, 0 0 0 4px rgba(242,177,52,0.35); }
+  #etude .aide { margin: 0; text-align: center; font: 11px/15px var(--main); color: #6f805a; }
 
   #inventaire.ouvert { opacity: 1; transform: translateY(-50%) scale(1); pointer-events: auto; }
   #inventaire .tete { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
@@ -237,7 +281,13 @@
 <div id="inventaire" aria-label="Inventaire">
   <div id="carnet" role="button" tabindex="0" aria-label="Carnet" aria-expanded="false">
     <div class="couverture"><svg viewBox="0 0 60 60" aria-hidden="true"><g fill="none" stroke="#4a2410" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="30" r="25" stroke-dasharray="3 3" opacity=".7"/><path d="M30 46C19 40 16 28 22 16c5 8 13 10 16 18 2 6-2 10-8 12z" fill="#8a4c2a"/><path d="M30 46C29 36 27 28 23 19"/><path d="M27 33l-5-2M28 39l-5-1M29 28l5-3M30 35l6-3"/></g></svg><span class="nomC">Carnet</span></div><div class="elastique"></div><div class="signet"></div>
-    <div class="pages"><h3>Mes recettes</h3><button class="fermer" aria-label="Fermer le carnet">×</button><div id="carnetListe"></div></div>
+    <div class="pages"><div class="onglets"><button data-o="recettes" class="actif">Recettes</button><button data-o="indices">Indices</button></div><button class="fermer" aria-label="Fermer le carnet">×</button><div id="carnetListe"></div><div id="carnetIndices" hidden></div></div>
+  </div>
+  <div id="etude" role="button" tabindex="0" aria-label="Observation" aria-expanded="false">
+    <div class="couv"><svg viewBox="0 0 48 48" aria-hidden="true"><g stroke="#2a3a1a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 30l11 11" stroke-width="6"/><path d="M30 30l11 11" stroke="#9a6a3a" stroke-width="3.4"/><circle cx="20" cy="20" r="13" fill="#e9f6ff"/><path d="M12.5 15.5a9 9 0 0 1 7-5" stroke="#fff" stroke-width="2.4" fill="none"/></g><text x="20" y="26" text-anchor="middle" font-family="Nunito, sans-serif" font-weight="900" font-size="16" fill="#e0902c">?</text></svg><span>Observer</span></div>
+    <div class="dedans"><h3>Observation</h3><button class="fermer" aria-label="Fermer">×</button>
+      <div id="etudeCase" data-t="etude">Glisse un objet ici</div>
+      <p class="aide">Je l'examinerai, puis je noterai mes idées dans le carnet.</p></div>
   </div>
   <div class="panneau">
   <div class="section">
@@ -276,7 +326,7 @@
   var NB_ROCHERS = 4;
   var herbeArrachee = new Set(), arbresCoupes = new Set(), souches = new Set(), rochersCasses = new Set();
   var rochersDegats = new Map(), arbresTombent = new Map(), secousses = new Map(), fruitsTombes = new Set();
-  var oiseauxPartis = new Map();     // modèles d'arbres différents
+  var oiseauxPartis = new Map();   // nids dont les oiseaux sont partis (moment du départ)     // modèles d'arbres différents
   var TRONC = 0.22;      // rayon du tronc, en blocs (collision)
   var PAS_RELIEF = 0.30; // hauteur d'une marche de relief (1 = hauteur d'un losange)
   var RELIEF_HAUT = 2.7, RELIEF_BAS = 0.6;   // relief maximal vers le haut et vers le bas
@@ -302,7 +352,7 @@
   var W = 0, H = 0, TW = 0, TH = 0, DPR = 1;
   var COURSE = 1.52;     // multiplicateur de vitesse en courant (Maj)
 
-  var joueur = { x: C / 2, y: C / 2, dir: 1, face: 1, ang: Math.PI / 4, sac: false, grattage: 0, gratte: null, mainGratte: 1, coupe: null, coupage: 0, mainOutil: 1, secoue: null, secouage: 0, z: 14, vz: 0, chute: true, attenteChute: 0.35, atterri: 0, fouille: 0, inventaire: false, ramasse: null, penche: 0, attente: 0, tCoucou: -1, coucou: 0, phase: 0, amp: 0, temps: 0, h: 0, allure: 0, vitesse: 0 };
+  var joueur = { x: C / 2, y: C / 2, dir: 1, face: 1, ang: Math.PI / 4, sac: false, grattage: 0, gratte: null, mainGratte: 1, coupe: null, coupage: 0, mainOutil: 1, secoue: null, secouage: 0, etude: null, etudeV: 0, z: 14, vz: 0, chute: true, attenteChute: 0.35, atterri: 0, fouille: 0, inventaire: false, ramasse: null, penche: 0, attente: 0, tCoucou: -1, coucou: 0, phase: 0, amp: 0, temps: 0, h: 0, allure: 0, vitesse: 0 };
   var poussieres = [];
   var camera = { x: C / 2, y: C / 2 };
   var touches = {};
@@ -359,10 +409,15 @@
       'float h1(float n){ return fract(sin(n) * 43758.5453); }',
       'float b1(float x){ float i = floor(x); float f = fract(x); f = f * f * (3.0 - 2.0 * f); return mix(h1(i), h1(i + 1.0), f); }',
       'void main(){',
-      '  vec3 c = texture2D(tex, uv).rgb;',
-      // rafale : des vagues de lumière parcourent l herbe
-      '  float herbeM = smoothstep(0.02, 0.10, c.g - max(c.r, c.b));',
+      '  vec3 c0 = texture2D(tex, uv).rgb;',
+      // rafale : les brins d herbe se couchent et se relèvent, des vagues de lumière passent
+      '  float herbeM = smoothstep(0.02, 0.10, c0.g - max(c0.r, c0.b));',
       '  float ondes = (sin((uv.x * 1.3 - uv.y * 0.8) * 24.0 - temps * 4.2) * 0.5 + 0.5) * (sin((uv.x * 0.7 + uv.y * 1.1) * 8.0 - temps * 1.6) * 0.5 + 0.5);',
+      '  float balH = sin(uv.x * res.x * 0.035 + uv.y * res.y * 0.012 - temps * 5.5) * 0.6 + sin(uv.y * res.y * 0.05 - temps * 7.0) * 0.4;',
+      '  vec2 dep = vec2((balH * 0.6 + ondes * 1.4) * vent * 2.6, -ondes * vent * 0.8) / res;',
+      '  vec3 c1 = texture2D(tex, uv + dep).rgb;',
+      '  float herbe1 = smoothstep(0.02, 0.10, c1.g - max(c1.r, c1.b));',
+      '  vec3 c = mix(c0, c1, herbeM * herbe1);',
       '  c += vec3(0.07, 0.09, 0.03) * vent * herbeM * smoothstep(0.30, 0.90, ondes);',
       // halo doux sur les zones claires
       '  vec2 px = 1.0 / res; vec3 b = vec3(0.0);',
@@ -1217,7 +1272,9 @@
   }
 
   // Tronc effilé, évasé au pied, avec écorce
+  var troncs = [], troncInfo = null;
   function dessinerTronc(g, r, x0, y0, hautT, largB, largH, penche, coul, bouleau) {
+    troncInfo = { hautT: hautT, largB: largB, largH: largH, penche: penche, bouleau: !!bouleau };
     var hx = x0 + penche, hy = y0 - hautT;
     function bord(c) {      // c = -1 gauche, 1 droite
       return [[x0 + c * largB * 1.6, y0], [x0 + c * largB, y0 - 12], [x0 + penche * 0.45 + c * (largB + largH) / 2, y0 - hautT * 0.5], [hx + c * largH, hy]];
@@ -1424,6 +1481,7 @@
     }
     // Forme du feuillage (en unités de bloc, depuis le pied du tronc) pour savoir s'il cache le perso
     feuillages[v] = grappes.map(function (b) { return { x: b.x - x0, y: b.y - y0, r: b.r }; });
+    troncs[v] = troncInfo; troncs[v].visible = essence === 'sapin' ? Math.min(34 * echH + 6, troncInfo.hautT) : troncInfo.hautT * 0.6;
     return c;
   }
 
@@ -1708,7 +1766,7 @@
     ctx.translate(x, y);
     // Balancement au vent, secousse, chute quand on l'abat
     var cleA = gx + ',' + gy, tpsA = performance.now() / 1000;
-    var sk = (0.008 + vent.force * 0.05) * Math.sin(tpsA * 1.6 + gx * 0.7 + gy * 1.3) + vent.force * 0.035;
+    var sk = vent.force > 0.02 ? vent.force * (0.045 * Math.sin(tpsA * 1.9 + gx * 0.7 + gy * 1.3) + 0.03 * Math.sin(tpsA * 4.3 + gx) + 0.035) : 0;
     var sec = secousses.get(cleA);
     if (sec !== undefined) { var age = tpsA - sec; if (age < 1.6) sk += 0.10 * Math.exp(-age * 3.2) * Math.sin(age * 32); else secousses.delete(cleA); }
     var chA = arbresTombent.get(cleA);
@@ -1719,54 +1777,71 @@
     // Tronc écorcé : plaies de bois clair qui s'agrandissent à chaque écorce prise
     var niv = ecorcesPrises.get(gx + ',' + gy) || 0;
     if (joueur.gratte && joueur.gratte.c.gx === gx && joueur.gratte.c.gy === gy) niv += joueur.gratte.t / joueur.gratte.duree;
-    if (niv > 0) dessinerEcorcage(niv, gx * 7 + gy * 13, miroir);
-    if (oiseauSur(gx, gy)) dessinerOiseauPerche(gx, gy, code, tpsA);
+    if (niv > 0) dessinerEcorcage(niv, gx * 7 + gy * 13, code);
+    if (nidSur(gx, gy)) dessinerNid(gx, gy, code);
     ctx.restore();
   }
-  // Écorçage : trois zones l'une au-dessus de l'autre au milieu du tronc (un peu de hasard par arbre).
-  // Pendant le grattage, des entailles apparaissent une à une, puis le bois clair se dégage.
-  function dessinerEcorcage(niv, graine, miroir) {
+  // Écorçage : une seule zone au milieu du tronc, qu'on épluche petit à petit.
+  // Des lamelles d'écorce se décollent par le haut et pendent sur le côté, sans quitter l'arbre ;
+  // dessous, le bois clair apparaît. Tout reste découpé dans la silhouette du tronc.
+  function dessinerEcorcage(niv, graine, code) {
+    var T = troncs[code - 1];
+    if (!T) return;
     function h(n) { var x = Math.sin(graine * 12.9898 + n * 78.233) * 43758.5453; return x - Math.floor(x); }
-    var cote = miroir ? -1 : 1, baseY = -36 - h(1) * 6, baseX = (h(2) - 0.5) * 3;
-    var zones = [[baseX, baseY], [baseX + (h(3) - 0.5) * 4, baseY - 14 - h(4) * 3], [baseX + (h(5) - 0.5) * 4, baseY + 13 + h(6) * 3]];
-    for (var n = 0; n < 3; n++) {
-      var f = Math.max(0, Math.min(1, niv - n));
-      if (f <= 0) break;
-      var cx = zones[n][0] * cote, cy = zones[n][1], rx = 4.3, ry = 6.8;
-      function forme() {
-        ctx.beginPath();
-        for (var a = 0; a <= 14; a++) {
-          var t = a / 14 * Math.PI * 2, j = 1 + (h(10 + a + n * 20) - 0.5) * 0.28;
-          var px = cx + Math.cos(t) * rx * j, py = cy + Math.sin(t) * ry * j;
-          if (a) ctx.lineTo(px, py); else ctx.moveTo(px, py);
-        }
-        ctx.closePath();
-      }
-      // Bois mis à nu, qui se dégage à la fin du grattage
-      var nu = Math.max(0, (f - 0.55) / 0.45);
-      if (nu > 0) {
-        forme();
-        ctx.fillStyle = 'rgba(236,204,150,' + nu.toFixed(3) + ')'; ctx.fill();
-        ctx.save(); forme(); ctx.clip();
-        ctx.strokeStyle = 'rgba(184,128,70,' + (0.8 * nu).toFixed(3) + ')'; ctx.lineWidth = 0.9;
-        for (var k = -2; k <= 2; k++) { ctx.beginPath(); ctx.moveTo(cx + k * 1.7, cy - ry); ctx.lineTo(cx + k * 1.7 + 0.6, cy + ry); ctx.stroke(); }
-        ctx.fillStyle = 'rgba(120,70,30,' + (0.3 * nu).toFixed(3) + ')'; ctx.fillRect(cx - rx, cy + ry * 0.4, rx * 2, ry);
-        ctx.restore();
-        forme(); ctx.lineWidth = 1.3; ctx.strokeStyle = 'rgba(60,32,12,' + (0.9 * nu).toFixed(3) + ')'; ctx.stroke();
-      }
-      // Entailles de la pierre, qui apparaissent une à une
-      var nb = Math.ceil(f * 7);
-      ctx.lineCap = 'round';
-      for (var e = 0; e < nb; e++) {
-        var ex = cx + (h(40 + e + n * 9) - 0.5) * rx * 1.4, ey = cy - ry * 0.75 + e * ry * 0.24;
-        var lon = 3 + h(60 + e + n * 7) * 2.5, pente = (h(80 + e) - 0.5) * 1.6;
-        ctx.strokeStyle = 'rgba(56,30,12,0.85)'; ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(ex - lon / 2, ey - pente); ctx.lineTo(ex + lon / 2, ey + pente); ctx.stroke();
-        ctx.strokeStyle = 'rgba(240,210,160,0.9)'; ctx.lineWidth = 0.8;
-        ctx.beginPath(); ctx.moveTo(ex - lon / 2, ey - pente - 0.9); ctx.lineTo(ex + lon / 2, ey + pente - 0.9); ctx.stroke();
-      }
+    function centre(y) { return T.penche * 0.9 * y / T.hautT; }
+    function demiL(y) { var u = Math.max(0, Math.min(1, (y - 12) / Math.max(1, T.hautT * 0.5 - 12))); return (y < 12 ? T.largB * (1.6 - 0.6 * y / 12) : T.largB + ((T.largB + T.largH) / 2 - T.largB) * u); }
+    var hc = Math.min(30, T.visible * 0.52) + (h(1) - 0.5) * 4, hh = Math.min(9, T.visible * 0.24);
+    var cx = centre(hc), dl = demiL(hc), w = dl * 0.66;
+    var haut = -hc - hh, bas = -hc + hh;
+    // Silhouette du tronc (un peu en retrait) : rien ne dépasse
+    ctx.save();
+    ctx.beginPath();
+    for (var y = 4; y <= hc + hh + 6; y += 3) ctx.lineTo(centre(y) - demiL(y) + 1, -y);
+    for (y = hc + hh + 6; y >= 4; y -= 3) ctx.lineTo(centre(y) + demiL(y) - 1, -y);
+    ctx.closePath(); ctx.clip();
+    var f = Math.max(0, Math.min(3, niv)), avance = f / 3;
+    // Bois mis à nu : la zone s'ouvre du haut vers le bas
+    var yb = haut + (bas - haut) * Math.min(1, 0.25 + avance * 0.75);
+    ctx.beginPath();
+    ctx.moveTo(cx - w * 0.8, haut + 1.5);
+    ctx.quadraticCurveTo(cx, haut - 1.5, cx + w * 0.8, haut + 1.5);
+    ctx.lineTo(cx + w * (0.85 + (h(3) - 0.5) * 0.2), yb);
+    for (var n = 0; n <= 6; n++) ctx.lineTo(cx + w * 0.85 - n / 6 * w * 1.7, yb + (n % 2 ? 1.6 : -0.4) * (0.6 + h(10 + n)));
+    ctx.closePath();
+    ctx.fillStyle = T.bouleau ? '#f3dfb6' : '#efcf98'; ctx.fill();
+    ctx.save(); ctx.clip();
+    ctx.strokeStyle = 'rgba(170,110,55,0.55)'; ctx.lineWidth = 0.7;
+    for (n = -3; n <= 3; n++) { ctx.beginPath(); ctx.moveTo(cx + n * w * 0.28, haut); ctx.quadraticCurveTo(cx + n * w * 0.28 + 0.8, (haut + yb) / 2, cx + n * w * 0.28 - 0.3, yb + 2); ctx.stroke(); }
+    ctx.fillStyle = 'rgba(255,250,235,0.45)'; ctx.fillRect(cx - w, haut, w * 0.6, yb - haut);
+    ctx.fillStyle = 'rgba(120,70,30,0.25)'; ctx.fillRect(cx + w * 0.4, haut, w, yb - haut);
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(70,38,16,0.9)'; ctx.lineWidth = 1.1; ctx.stroke();
+    // Lamelles : trois par écorce, la dernière pousse pendant le grattage
+    var nbL = Math.min(9, f * 3), coulE = T.bouleau ? '#f1ece0' : '#86512d', coulB = T.bouleau ? '#2a2420' : '#3e2210';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (n = 0; n < Math.ceil(nbL); n++) {
+      var l = Math.min(1, nbL - n);
+      var xi = cx + (h(30 + n) - 0.5) * w * 1.5, cote2 = xi < cx ? -1 : 1;
+      var lon = (5 + h(40 + n) * 5) * l, larg = 1.6 + h(50 + n) * 1.2;
+      var x1 = xi + cote2 * (1.5 + h(60 + n) * 2.5) * l, y1 = yb + lon;
+      x1 = Math.max(centre(-y1) - demiL(-y1) + 2, Math.min(centre(-y1) + demiL(-y1) - 2, x1));
+      // dessous de la lamelle (bois) puis dessus (écorce)
+      ctx.strokeStyle = coulB; ctx.lineWidth = larg + 1.6;
+      ctx.beginPath(); ctx.moveTo(xi, yb - 0.5); ctx.quadraticCurveTo(xi + cote2 * 2.5, yb + lon * 0.35, x1, y1); ctx.stroke();
+      ctx.strokeStyle = '#e9c890'; ctx.lineWidth = larg;
+      ctx.beginPath(); ctx.moveTo(xi, yb - 0.5); ctx.quadraticCurveTo(xi + cote2 * 2.5, yb + lon * 0.35, x1, y1); ctx.stroke();
+      ctx.strokeStyle = coulE; ctx.lineWidth = larg * 0.55;
+      ctx.beginPath(); ctx.moveTo(xi + cote2 * larg * 0.25, yb + 0.5); ctx.quadraticCurveTo(xi + cote2 * 2.8, yb + lon * 0.4, x1 + cote2 * 0.3, y1 - 0.4); ctx.stroke();
     }
+    // Entailles fraîches au bord du bois
+    ctx.strokeStyle = 'rgba(56,30,12,0.8)'; ctx.lineWidth = 0.9;
+    for (n = 0; n < Math.ceil(f * 2); n++) {
+      var ex = cx + (h(70 + n) - 0.5) * w * 1.6, ey = haut - 1 - h(80 + n) * 2;
+      ctx.beginPath(); ctx.moveTo(ex - 1.5, ey); ctx.lineTo(ex + 1.5, ey + 0.6); ctx.stroke();
+    }
+    ctx.restore();
   }
+
 
 
   // Tous les arbres visibles, du fond vers l'avant
@@ -1877,6 +1952,11 @@
     var sC = camera.x + camera.y, dC = camera.x - camera.y;
     var sMin = Math.floor(sC - demiH), sMax = Math.ceil(sC + demiH) + 18;
     var dMin = Math.floor(dC - demiL), dMax = Math.ceil(dC + demiL);
+    // Petites bêtes rangées par profondeur
+    var betes = new Map();
+    function ranger(prof, f) { var l = betes.get(prof); if (!l) betes.set(prof, l = []); l.push(f); }
+    oiseaux.forEach(function (o) { ranger(o.etat === 'perche' || (o.etat === 'vol' && !o.sol && o.brindille) ? o.gx + o.gy : Math.floor(o.wx) + Math.floor(o.wy), dessinerUnOiseau.bind(null, o)); });
+    papillons.forEach(function (q) { ranger(Math.floor(q.wx) + Math.floor(q.wy), dessinerUnPapillon.bind(null, q)); });
     for (somme = sMin; somme <= sMax; somme++) {
       if (!fait && somme > sMaxPieds) placerJoueur();
       var devant = somme + 1 > profJoueur;
@@ -1904,6 +1984,8 @@
         if (!fait && devant) attente.push(dessinerArbre.bind(null, gx, gy, a, cache ? alphaArbre : 1));
         else dessinerArbre(gx, gy, a, cache ? alphaArbre : 1);
       }
+      var lb = betes.get(somme);
+      if (lb) for (var nb2 = 0; nb2 < lb.length; nb2++) { if (!fait && somme + 1 > profJoueur) attente.push(lb[nb2]); else lb[nb2](); }
     }
     if (!fait) placerJoueur();
   }
@@ -2351,8 +2433,9 @@
     });
 
     // ----- Haut du corps : tronc, sac, bras, triés en profondeur -----
-    var corps = [], mainDroite = null, brasDevant = null;
+    var corps = [], mainDroite = null, brasDevant = null, brasDevant2 = [];
     var zb = rebond;
+    if (joueur.etude && joueur.etude.t > ET.question && joueur.etude.t < ET.question + 0.35) zb += Math.sin((joueur.etude.t - ET.question) / 0.35 * Math.PI) * 0.10;
 
     corps.push({ d: P(elan, 0, 0).d, dessin: function () {
       var bas = P(elan, 0, 0.40 + zb), hautT = P(elan, 0, 0.86 + zb);
@@ -2561,8 +2644,30 @@
         main = { x: main.x + (mC.x - main.x) * co, y: main.y + (mC.y - main.y) * co, d: main.d + 0.4 };
         coude = { x: coude.x + (cC2.x - coude.x) * co, y: coude.y + (cC2.y - coude.y) * co, d: coude.d };
       }
+      var ev = joueur.etudeV, et = joueur.etude ? joueur.etude.t : 99, levee = 0, ecrit = 0;
+      if (ev > 0 && joueur.etude) {
+        levee = Math.max(0, Math.min(1, (et - 0.5) / 0.45)) * Math.max(0, Math.min(1, (ET.eureka + 0.3 - et) / 0.4));
+        ecrit = Math.max(0, Math.min(1, (et - ET.eureka - 0.1) / 0.4)) * Math.max(0, Math.min(1, (ET.fin - et) / 0.4));
+        var mE = null, cE = null;
+        if (c > 0 && levee > 0) {
+          // L'objet levé devant les yeux, qu'on tourne doucement
+          mE = P(0.30, 0.34 + Math.sin(et * 1.4) * 0.025, 1.24 + zb + Math.sin(et * 2.1) * 0.02); cE = P(0.16, 0.32, 0.84 + zb);
+          main = { x: main.x + (mE.x - main.x) * levee, y: main.y + (mE.y - main.y) * levee, d: main.d + 0.5 };
+          coude = { x: coude.x + (cE.x - coude.x) * levee, y: coude.y + (cE.y - coude.y) * levee, d: coude.d };
+        }
+        if (ecrit > 0) {
+          // Carnet tenu de la main gauche, la droite écrit
+          if (c < 0) { mE = P(0.36, -0.08, 0.50 + zb); cE = P(0.14, -0.26, 0.58 + zb); }
+          else { mE = P(0.38, 0.06 + Math.sin(et * 9) * 0.035, 0.56 + zb + Math.cos(et * 13) * 0.012); cE = P(0.14, 0.26, 0.60 + zb); }
+          main = { x: main.x + (mE.x - main.x) * ecrit, y: main.y + (mE.y - main.y) * ecrit, d: main.d + 0.5 };
+          coude = { x: coude.x + (cE.x - coude.x) * ecrit, y: coude.y + (cE.y - coude.y) * ecrit, d: coude.d };
+        }
+      }
       if (c > 0) mainDroite = main;
       var tenuMain = mains[c > 0 ? 'd' : 'g'];
+      if (c > 0 && levee > 0.3) tenuMain = { id: joueur.etude.id, nb: 1, examen: true };
+      if (ecrit > 0.3) tenuMain = null;
+      var levee2 = levee, ecrit2 = ecrit, etT = et;
       var dessinBras = function () {
         segment([epaule, coude, main], 0.09 * U, COUL.tunique);
         // Objet tenu : dans la main, légèrement devant les doigts
@@ -2578,14 +2683,47 @@
             ctx.rotate(Math.atan2(main.y - coude.y, main.x - coude.x) + 0.85 + OUTILS_LONGS[tenuMain.id]);
             ctx.drawImage(IMG_OBJ[tenuMain.id], -0.33 * tm, -0.68 * tm, tm, tm);
             ctx.restore();
+          } else if (tenuMain.examen) {
+            tm = 0.42 * U;
+            ctx.save(); ctx.translate(main.x, main.y - tm * 0.12); ctx.rotate(Math.sin(etT * 1.5) * 0.35);
+            ctx.drawImage(IMG_OBJ[tenuMain.id], -tm * 0.5, -tm * 0.5, tm, tm);
+            ctx.restore();
           } else ctx.drawImage(IMG_OBJ[tenuMain.id], main.x - tm * 0.5, main.y - tm * 0.38, tm, tm);
           // Pouce par-dessus l'objet
           ctx.beginPath(); ctx.arc(main.x + c * 0.03 * U, main.y + 0.025 * U, 0.03 * U, 0, Math.PI * 2);
           ctx.fillStyle = COUL.peau; ctx.fill(); ctx.strokeStyle = COUL.trait; ctx.lineWidth = trait * 0.8; ctx.stroke();
         }
       };
+      if (ecrit2 > 0.3) {
+        var ancien = dessinBras;
+        dessinBras = function () {
+          ancien();
+          if (c < 0) {
+            // Petit carnet ouvert
+            var bw = 0.26 * U * ecrit2, bh = 0.18 * U * ecrit2;
+            ctx.save(); ctx.translate(main.x + 0.07 * U, main.y - 0.04 * U); ctx.rotate(-0.12);
+            ctx.fillStyle = '#7c4527'; ctx.strokeStyle = COUL.trait; ctx.lineWidth = trait * 0.8;
+            ctx.beginPath(); ctx.rect(-bw / 2 - 2, -bh / 2 - 2, bw + 4, bh + 4); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#fbf3e1'; ctx.fillRect(-bw / 2, -bh / 2, bw / 2 - 0.5, bh); ctx.fillRect(0.5, -bh / 2, bw / 2 - 0.5, bh);
+            ctx.strokeStyle = 'rgba(120,150,190,0.7)'; ctx.lineWidth = 0.8;
+            for (var li = 1; li < 4; li++) { ctx.beginPath(); ctx.moveTo(-bw / 2 + 2, -bh / 2 + li * bh / 4); ctx.lineTo(-2, -bh / 2 + li * bh / 4); ctx.moveTo(2, -bh / 2 + li * bh / 4); ctx.lineTo(bw / 2 - 2, -bh / 2 + li * bh / 4); ctx.stroke(); }
+            ctx.strokeStyle = '#5a3420'; ctx.lineWidth = 1;
+            var lig = Math.min(3, Math.floor((etT - ET.eureka) * 1.6));
+            for (li = 0; li < lig; li++) { ctx.beginPath(); ctx.moveTo(3, -bh / 2 + (li + 1) * bh / 4 - 1); for (var q = 0; q < 5; q++) ctx.lineTo(4 + q * (bw / 2 - 8) / 5, -bh / 2 + (li + 1) * bh / 4 - 1 - (q % 2) * 1.6); ctx.stroke(); }
+            ctx.restore();
+          } else {
+            // Crayon
+            ctx.strokeStyle = COUL.trait; ctx.lineWidth = 0.05 * U; ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(main.x + 0.02 * U, main.y - 0.14 * U); ctx.lineTo(main.x - 0.05 * U, main.y + 0.06 * U); ctx.stroke();
+            ctx.strokeStyle = '#f2c531'; ctx.lineWidth = 0.032 * U;
+            ctx.beginPath(); ctx.moveTo(main.x + 0.02 * U, main.y - 0.14 * U); ctx.lineTo(main.x - 0.04 * U, main.y + 0.03 * U); ctx.stroke();
+            rond(main, 0.055 * U, COUL.peau);
+          }
+        };
+      }
       // Pendant le coucou, le bras levé passe devant la tête
       if (c > 0 && joueur.coucou > 0.2) { brasDevant = dessinBras; return; }
+      if ((c > 0 && levee2 > 0.2) || ecrit2 > 0.2) { brasDevant2.push(dessinBras); return; }
       corps.push({ d: ouvert > 0 ? dSac + 0.001 * c : epaule.d + (main.d - epaule.d) * 0.3 + 0.001 * c, dessin: function () {
         dessinBras();
       }});
@@ -2611,6 +2749,12 @@
     var Rt = 0.30 * U;
     var tc = P((joueur.sac ? L(elan * 1.25, 0.16) : elan * 1.25 + 0.04 * fo) + 0.06 * pr, 0, 1.08 + zb - 0.03 * fo - 0.04 * pr);
     var regard = (joueur.sac || atelier ? -0.32 * fo : 0) - 0.36 * pr + 0.06 * joueur.coucou;
+    if (joueur.etude) {
+      var tE = joueur.etude.t;
+      var lv = Math.max(0, Math.min(1, (tE - 0.5) / 0.45)) * Math.max(0, Math.min(1, (ET.eureka + 0.3 - tE) / 0.4));
+      var ec = Math.max(0, Math.min(1, (tE - ET.eureka - 0.1) / 0.4)) * Math.max(0, Math.min(1, (ET.fin - tE) / 0.4));
+      regard += 0.22 * lv - 0.34 * ec;
+    }
     // Cou
     rond(P(elan, 0, 0.88 + zb), 0.07 * U, COUL.peauOmbre);
     // Oreilles : celles au bord de la tête sont dessinées derrière le visage,
@@ -2714,6 +2858,7 @@
     ctx.restore();
 
     if (brasDevant) brasDevant();
+    brasDevant2.forEach(function (f) { f(); });
 
     // Caillou ramassé : dans la main, puis en vol jusqu'au sac
     if (rm && rm.pris && caillouxImg.length) {
@@ -2767,7 +2912,7 @@
     if (touches.KeyA || touches.ArrowLeft) dx -= 1;   // Q sur AZERTY
     if (touches.KeyD || touches.ArrowRight) dx += 1;  // D
     // Inventaire ouvert : on ne bouge pas, le perso se tourne vers nous et s'accroupit
-    if (joueur.inventaire || joueur.fouille > 0.25 || joueur.ramasse || joueur.gratte || joueur.coupe || joueur.secoue || joueur.chute || joueur.atterri > 0.2) { dx = 0; dy = 0; }
+    if (joueur.inventaire || joueur.fouille > 0.25 || joueur.ramasse || joueur.gratte || joueur.coupe || joueur.secoue || joueur.chute || joueur.etude || joueur.atterri > 0.2) { dx = 0; dy = 0; }
     majRamassage(dt);
     majGrattage(dt);
     majCoupe(dt);
@@ -2953,81 +3098,256 @@
     return { x: gx + 0.5 + dx / l * dist + (Math.random() - 0.5) * 0.3, y: gy + 0.5 + dy / l * dist + (Math.random() - 0.5) * 0.3 };
   }
 
-  // ---------- Oiseaux perchés sur certains arbres ----------
-  function oiseauSur(gx, gy) {
-    if (hasard2(gx * 41 + 1, gy * 43 - 9) > 0.2) return false;
+  // ---------- Oiseaux : nichent dans certains arbres, descendent chercher des brindilles ----------
+  var oiseaux = [], oisTimer = 0;
+  var ESPECES_OIS = [
+    { n: 'mesange', t: 0.78, cL: 5.0, cH: 4.0, q: 5, qL: 2.2, b: 2.0, bc: '#3a2a20', dos: '#7aa6d8', ventre: '#f5d84a', aile: '#4a6ea6', tete: '#2b3c66', masque: true, poids: 3 },
+    { n: 'rougegorge', t: 0.82, cL: 5.4, cH: 4.8, q: 4.5, qL: 2.4, b: 1.9, bc: '#3a2a20', dos: '#8f6d52', ventre: '#f0843f', aile: '#6c513d', tete: '#8f6d52', poids: 3 },
+    { n: 'moineau', t: 0.84, cL: 5.6, cH: 4.2, q: 5, qL: 2.4, b: 2.4, bc: '#5a4634', dos: '#a17b52', ventre: '#e8dcc4', aile: '#6e4f30', tete: '#7c8088', raies: true, poids: 3 },
+    { n: 'merle', t: 1.04, cL: 6.6, cH: 4.5, q: 7, qL: 2.6, b: 3.0, bc: '#f2a92c', dos: '#2a2622', ventre: '#3a332c', aile: '#1c1916', tete: '#2a2622', oeilC: '#f2a92c', poids: 2 },
+    { n: 'tourterelle', t: 1.12, cL: 7.0, cH: 5.0, q: 7, qL: 3.0, b: 2.0, bc: '#4a3a34', dos: '#c9b9a6', ventre: '#ead9c8', aile: '#ac9781', tete: '#bdaea0', collier: true, poids: 2 },
+    { n: 'pie', t: 1.12, cL: 6.2, cH: 4.3, q: 13, qL: 2.4, b: 3.0, bc: '#141414', dos: '#1c1f2a', ventre: '#f6f6f2', aile: '#22345c', tete: '#1c1f2a', reflet: '#4a72c0', pie: true, poids: 1 },
+    { n: 'corbeau', t: 1.5, cL: 7.8, cH: 5.2, q: 8, qL: 3.6, b: 4.8, bc: '#161616', dos: '#1b1b22', ventre: '#23232b', aile: '#121218', tete: '#1b1b22', reflet: '#5a6296', gros: true, poids: 1 }
+  ];
+  var POIDS_OIS = []; ESPECES_OIS.forEach(function (e, i) { for (var n = 0; n < e.poids; n++) POIDS_OIS.push(i); });
+  function nidSur(gx, gy) {
+    if (hasard2(gx * 41 + 1, gy * 43 - 9) > 0.16) return false;
     var cle2 = gx + ',' + gy, parti = oiseauxPartis.get(cle2);
-    if (parti !== undefined) { if (performance.now() - parti < 45000) return false; oiseauxPartis.delete(cle2); }
+    if (parti !== undefined && performance.now() - parti > 60000) oiseauxPartis.delete(cle2);
     return !arbresTombent.has(cle2);
   }
+  function especeNid(gx, gy) { return ESPECES_OIS[POIDS_OIS[Math.floor(hasard2(gx * 2 + 9, gy - 4) * POIDS_OIS.length)]]; }
   function perchoir(gx, gy, code) {
     var f = feuillages[code - 1];
     if (!f || !f.length) return { x: 0, y: -150 };
     var tri = f.slice().sort(function (a, b) { return (a.y - a.r) - (b.y - b.r); });
     var g = tri[Math.floor(hasard2(gx * 3 + 5, gy * 7 + 1) * Math.min(3, tri.length))];
-    return { x: g.x + (hasard2(gx, gy * 3) - 0.5) * g.r * 0.6, y: g.y - g.r * 0.86 };
+    return { x: g.x + (hasard2(gx, gy * 3) - 0.5) * g.r * 0.5, y: g.y - g.r * 0.82 };
   }
-  // Oiseau dessiné en unités de sprite (corps d'environ 12 de long), pattes au point (0, 0)
-  function dessinerOiseau(g, pal, tps, vol) {
-    g.lineJoin = 'round'; g.lineCap = 'round';
-    var bat = vol ? Math.sin(tps * 34) : 0;
-    g.strokeStyle = '#3a2414'; g.lineWidth = 0.9;
-    if (!vol) { g.beginPath(); g.moveTo(-1, -1.5); g.lineTo(-1.5, 0.5); g.moveTo(1.2, -1.5); g.lineTo(1.3, 0.5); g.stroke(); }
-    // Queue
-    g.fillStyle = pal.aile;
-    g.beginPath(); g.moveTo(-4.5, -4.5); g.lineTo(-10.5, -7.5 + (vol ? 2 : 0)); g.lineTo(-10, -3.6); g.closePath(); g.fill(); g.stroke();
-    // Corps et ventre
-    g.fillStyle = pal.dos; g.beginPath(); g.ellipse(0, -5, 6, 4.4, -0.15, 0, 6.2832); g.fill(); g.stroke();
-    g.fillStyle = pal.ventre; g.beginPath(); g.ellipse(1.8, -3.6, 3.8, 2.6, -0.2, 0, 6.2832); g.fill();
-    // Tête
-    g.fillStyle = pal.dos; g.beginPath(); g.arc(4.6, -8.6, 3.1, 0, 6.2832); g.fill(); g.stroke();
-    g.fillStyle = pal.ventre; g.beginPath(); g.arc(5.6, -7.6, 1.6, 0, 6.2832); g.fill();
-    g.fillStyle = '#f2b134'; g.beginPath(); g.moveTo(7.4, -9.2); g.lineTo(10.2, -8.4); g.lineTo(7.4, -7.6); g.closePath(); g.fill(); g.stroke();
-    g.fillStyle = '#1a1210'; g.beginPath(); g.arc(5.6, -9.4, 0.8, 0, 6.2832); g.fill();
-    g.fillStyle = '#fff'; g.beginPath(); g.arc(5.85, -9.65, 0.28, 0, 6.2832); g.fill();
-    // Aile
-    g.save(); g.translate(-0.5, -6); g.rotate(vol ? -0.4 - bat * 0.9 : -0.18);
-    g.fillStyle = pal.aile; g.beginPath(); g.ellipse(-1.5, vol ? -2.5 : 0.4, 4.4, vol ? 3.6 : 2.4, 0, 0, 6.2832); g.fill(); g.stroke();
-    g.strokeStyle = 'rgba(255,255,255,0.35)'; g.beginPath(); g.moveTo(-4, 0.4); g.lineTo(1, -0.2); g.stroke();
-    g.restore();
+  // Point du nid dans le monde : sol sous le nid (wx, wy) et hauteur z (en largeurs de bloc)
+  function nidMonde(gx, gy) {
+    var pt = perchoir(gx, gy, arbreEn(gx, gy) || 1), m = (gx * 3 + gy * 5) & 1 ? -1 : 1, sx = pt.x * m / 100;
+    return { wx: gx + 0.5 + sx / 2, wy: gy + 0.5 - sx / 2, z: -pt.y / 100 };
   }
-  function dessinerOiseauPerche(gx, gy, code, tps) {
-    var pt = perchoir(gx, gy, code), ph = hasard2(gx * 11, gy * 17) * 10;
-    var cycle = (tps + ph) % 3.4, saut = cycle < 0.35 ? Math.sin(cycle / 0.35 * Math.PI) * 3 : 0;
-    var picore = cycle > 1.8 && cycle < 2.3 ? Math.sin((cycle - 1.8) / 0.5 * Math.PI) * 0.5 : 0;
-    var pal = PAL_OISEAUX[Math.floor(hasard2(gx * 2 + 9, gy - 4) * PAL_OISEAUX.length)];
+  // Nid de brindilles posé sur la couronne de l'arbre (unités du sprite)
+  function dessinerNid(gx, gy, code) {
+    var pt = perchoir(gx, gy, code), x = pt.x, y = pt.y + 1.5;
     ctx.save();
-    ctx.translate(pt.x, pt.y - saut);
-    ctx.scale((hasard2(gx, gy + 99) < 0.5 ? -1 : 1) * 0.95, 0.95);
-    ctx.rotate(picore);
-    dessinerOiseau(ctx, pal, tps, false);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.fillStyle = '#5a3a1e'; ctx.strokeStyle = '#2e1a0a'; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.ellipse(x, y, 8.5, 4.2, 0, 0, Math.PI); ctx.lineTo(x - 8.5, y - 0.5); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = '#a07445'; ctx.lineWidth = 0.9;
+    for (var n = 0; n < 9; n++) {
+      var a = n / 9 * Math.PI, rx = Math.cos(a) * 8, ry = Math.sin(a) * 3.6;
+      ctx.beginPath(); ctx.moveTo(x + rx - 2.4, y + ry * 0.6 - 0.5); ctx.lineTo(x + rx + 2.6, y + ry * 0.8 + 0.6); ctx.stroke();
+    }
+    ctx.strokeStyle = '#7a5230'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.ellipse(x, y - 0.4, 8, 2.4, 0, Math.PI, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = '#3a2412'; ctx.beginPath(); ctx.ellipse(x, y - 0.2, 6, 1.6, 0, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   }
-  // Les oiseaux d'un arbre s'envolent
+  function libreAuSol(x, y) {
+    var cx = Math.floor(x / C), cy = Math.floor(y / C), t = terrain(cx, cy), i = (y - cy * C) * C + (x - cx * C);
+    return !t.arbre[i] && !t.rocher[i] && !(souches.size && souches.has(x + ',' + y));
+  }
+  function nouvelOiseau(gx, gy) {
+    var n = nidMonde(gx, gy);
+    return { gx: gx, gy: gy, sp: especeNid(gx, gy), wx: n.wx, wy: n.wy, z: n.z, etat: 'perche', t: 0, attente: 1.5 + Math.random() * 6,
+      dir: Math.random() < 0.5 ? -1 : 1, sx: 1, tete: 0, teteT: 1 + Math.random() * 2, bat: Math.random() * 6, picore: 0, brindille: false, sauts: 0 };
+  }
   function envolerOiseaux(gx, gy) {
-    var code = arbreEn(gx, gy);
-    if (!code || !oiseauSur(gx, gy)) return;
-    oiseauxPartis.set(gx + ',' + gy, performance.now());
-    var pt = perchoir(gx, gy, code), mir = (gx * 3 + gy * 5) & 1 ? -1 : 1;
-    var nb = 1 + (hasard2(gx + 3, gy + 8) < 0.4 ? 1 : 0);
-    for (var n = 0; n < nb; n++)
-      oiseauxVol.push({ gx: gx, gy: gy, sx: pt.x * mir / 100 + n * 0.08, z: -pt.y / 100, vx: (Math.random() < 0.5 ? -1 : 1) * (0.9 + Math.random() * 0.6),
-        vz: 0.8 + Math.random() * 0.5, t: Math.random(), vie: 4, pal: PAL_OISEAUX[Math.floor(hasard2(gx * 2 + 9, gy - 4) * PAL_OISEAUX.length)] });
+    oiseaux.forEach(function (o) {
+      if (o.etat === 'fuite') return;
+      var pres = Math.abs(o.wx - gx - 0.5) + Math.abs(o.wy - gy - 0.5) < 2.5;
+      if ((o.gx === gx && o.gy === gy) || (pres && o.etat === 'sol')) fuir(o);
+    });
+    if (nidSur(gx, gy)) oiseauxPartis.set(gx + ',' + gy, performance.now());
+  }
+  function fuir(o) {
+    o.etat = 'fuite'; o.t = 0;
+    var dx = o.wx - joueur.x, dy = o.wy - joueur.y, l = Math.sqrt(dx * dx + dy * dy) || 1;
+    o.vx = dx / l * 2.6 + (Math.random() - 0.5); o.vy = dy / l * 2.6 + (Math.random() - 0.5);
+    oiseauxPartis.set(o.gx + ',' + o.gy, performance.now());
+  }
+  function voler(o, wx, wy, z) {
+    var d = Math.sqrt((wx - o.wx) * (wx - o.wx) + (wy - o.wy) * (wy - o.wy));
+    o.etat = 'vol'; o.t = 0; o.de = { x: o.wx, y: o.wy, z: o.z }; o.vers = { x: wx, y: wy, z: z };
+    o.duree = 0.5 + d / 2.4 + Math.abs(z - o.z) * 0.3;
+    var sxv = (wx - wy) - (o.wx - o.wy);
+    if (Math.abs(sxv) > 0.02) o.dir = sxv > 0 ? 1 : -1;
   }
   function majOiseaux(dt) {
-    for (var n = oiseauxVol.length - 1; n >= 0; n--) {
-      var o = oiseauxVol[n];
-      o.t += dt; o.vie -= dt;
-      o.sx += o.vx * dt; o.z += (o.vz + Math.sin(o.t * 9) * 0.3) * dt;
-      if (o.vie <= 0) oiseauxVol.splice(n, 1);
+    oisTimer -= dt;
+    if (oisTimer <= 0) {
+      oisTimer = 1;
+      // Faire vivre les nids proches de la caméra
+      var bx = Math.floor(camera.x), by = Math.floor(camera.y);
+      for (var y = by - 11; y <= by + 11 && oiseaux.length < 16; y++) for (var x = bx - 11; x <= bx + 11 && oiseaux.length < 16; x++) {
+        if (!arbreEn(x, y) || !nidSur(x, y) || oiseauxPartis.has(x + ',' + y)) continue;
+        if (oiseaux.some(function (o) { return o.gx === x && o.gy === y; })) continue;
+        oiseaux.push(nouvelOiseau(x, y));
+        var sp = especeNid(x, y);
+        if (!sp.gros && hasard2(x + 3, y + 8) < 0.35) { var o2 = nouvelOiseau(x, y); o2.etat = 'perche'; o2.attente += 3; o2.wx += 0.06; o2.wy -= 0.06; oiseaux.push(o2); }
+      }
     }
+    for (var n = oiseaux.length - 1; n >= 0; n--) {
+      var o = oiseaux[n];
+      o.t += dt; o.bat += dt;
+      o.sx += (o.dir - o.sx) * Math.min(1, dt * 7);
+      var dj = Math.sqrt((o.wx - joueur.x) * (o.wx - joueur.x) + (o.wy - joueur.y) * (o.wy - joueur.y));
+      if (o.etat !== 'fuite' && !arbreEn(o.gx, o.gy)) fuir(o);
+      if (o.etat === 'perche') {
+        o.teteT -= dt;
+        if (o.teteT <= 0) { o.teteT = 0.6 + Math.random() * 2.2; if (Math.random() < 0.35) o.dir = -o.dir; else o.tete = Math.random() < 0.5 ? 0 : (Math.random() < 0.5 ? -1 : 1); }
+        if (o.t > o.attente) {
+          // Descendre chercher une brindille au pied de l'arbre
+          var cible = null;
+          for (var e = 0; e < 12 && !cible; e++) {
+            var a = Math.random() * 6.28, r = 1.2 + Math.random() * 1.8;
+            var tx = o.gx + 0.5 + Math.cos(a) * r, ty = o.gy + 0.5 + Math.sin(a) * r;
+            if (libreAuSol(Math.floor(tx), Math.floor(ty)) && Math.sqrt((tx - joueur.x) * (tx - joueur.x) + (ty - joueur.y) * (ty - joueur.y)) > 2.4) cible = { x: tx, y: ty };
+          }
+          if (cible) { voler(o, cible.x, cible.y, 0); o.sol = true; }
+          else { o.t = 0; o.attente = 2 + Math.random() * 3; }
+        }
+      } else if (o.etat === 'vol') {
+        var u = Math.min(1, o.t / o.duree), lis = u * u * (3 - 2 * u);
+        o.wx = o.de.x + (o.vers.x - o.de.x) * lis; o.wy = o.de.y + (o.vers.y - o.de.y) * lis;
+        o.z = o.de.z + (o.vers.z - o.de.z) * lis + Math.sin(Math.PI * u) * 0.35;
+        if (u >= 1) {
+          if (o.sol) { o.etat = 'sol'; o.t = 0; o.sauts = 3 + Math.floor(Math.random() * 4); o.prochain = 0.4; o.sol = false; }
+          else { o.etat = 'perche'; o.t = 0; o.attente = 4 + Math.random() * 8; o.brindille = false; o.tete = 0; }
+        }
+      } else if (o.etat === 'sol') {
+        if (dj < 1.5) { fuir(o); continue; }
+        o.prochain -= dt;
+        if (o.saut) {
+          o.saut.t += dt; var us = Math.min(1, o.saut.t / 0.22);
+          o.wx = o.saut.x0 + o.saut.dx * us; o.wy = o.saut.y0 + o.saut.dy * us; o.z = Math.sin(Math.PI * us) * 0.06;
+          if (us >= 1) { o.saut = null; o.z = 0; }
+        }
+        o.picore = Math.max(0, o.picore - dt * 3);
+        if (o.prochain <= 0 && !o.saut) {
+          o.prochain = 0.35 + Math.random() * 0.6;
+          if (o.sauts-- <= 0) {
+            o.brindille = true;
+            var nm = nidMonde(o.gx, o.gy); voler(o, nm.wx + (Math.random() - 0.5) * 0.05, nm.wy, nm.z);
+          } else if (Math.random() < 0.55) {
+            var ang = Math.random() * 6.28, pasO = 0.08 + Math.random() * 0.1;
+            var nx = o.wx + Math.cos(ang) * pasO, ny = o.wy + Math.sin(ang) * pasO;
+            if (libreAuSol(Math.floor(nx), Math.floor(ny))) { o.saut = { t: 0, x0: o.wx, y0: o.wy, dx: nx - o.wx, dy: ny - o.wy }; var sxs = (nx - ny) - (o.wx - o.wy); if (Math.abs(sxs) > 0.01) o.dir = sxs > 0 ? 1 : -1; }
+          } else if (Math.random() < 0.7) o.picore = 1;
+          else o.dir = -o.dir;
+        }
+      } else {
+        o.wx += o.vx * dt; o.wy += o.vy * dt; o.z += dt * (1.2 + o.t * 0.6);
+        var sxf = o.vx - o.vy; if (Math.abs(sxf) > 0.1) o.dir = sxf > 0 ? 1 : -1;
+        if (o.t > 4) { oiseaux.splice(n, 1); continue; }
+      }
+      if (Math.abs(o.wx - camera.x) + Math.abs(o.wy - camera.y) > 26) oiseaux.splice(n, 1);
+    }
+  }
+  // Oiseau en vue de profil, pattes au point (0, 0), tourné vers +x
+  function dessinerOiseau(g, sp, o, vol) {
+    var L = sp.cL, H = sp.cH;
+    g.lineJoin = 'round'; g.lineCap = 'round';
+    var trait = '#241510', bat = vol ? Math.sin(o.bat * (sp.gros ? 18 : 30)) : 0, pic = o.picore || 0;
+    var corpsY = -H * 0.9 - (vol ? 1 : 0);
+    g.strokeStyle = trait; g.lineWidth = 0.9;
+    // Pattes
+    if (!vol) {
+      g.strokeStyle = sp.gros ? '#2a2a2a' : '#7a5a3a'; g.lineWidth = sp.gros ? 1.1 : 0.8;
+      g.beginPath(); g.moveTo(-0.8, corpsY + H * 0.6); g.lineTo(-1.2, 0); g.lineTo(-2.6, 0.3); g.moveTo(1.2, corpsY + H * 0.6); g.lineTo(1.4, 0); g.lineTo(2.8, 0.3); g.stroke();
+      g.strokeStyle = trait; g.lineWidth = 0.9;
+    }
+    // Aile lointaine (en vol)
+    if (vol) {
+      g.save(); g.translate(0, corpsY - 1); g.rotate(-bat * 0.8 - 0.3);
+      g.fillStyle = sp.aile; g.globalAlpha = 0.85;
+      g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(-3, -L * 1.1, -L * 0.4, -L * 1.3); g.quadraticCurveTo(L * 0.3, -L * 0.8, L * 0.5, 0); g.closePath(); g.fill(); g.stroke();
+      g.restore(); g.globalAlpha = 1;
+    }
+    // Queue
+    g.fillStyle = sp.aile;
+    var qy = corpsY - H * 0.1 + (vol ? 0 : 0.6);
+    g.beginPath(); g.moveTo(-L * 0.6, qy - sp.qL * 0.5); g.lineTo(-L * 0.6 - sp.q, qy - sp.qL * 0.4 - (vol ? 0 : sp.q * 0.25)); g.lineTo(-L * 0.6 - sp.q * 0.95, qy + sp.qL * 0.6 - (vol ? 0 : sp.q * 0.2)); g.lineTo(-L * 0.6, qy + sp.qL * 0.5); g.closePath(); g.fill(); g.stroke();
+    if (sp.pie) { g.strokeStyle = sp.reflet; g.lineWidth = 0.7; g.beginPath(); g.moveTo(-L * 0.7, qy); g.lineTo(-L * 0.6 - sp.q * 0.9, qy - sp.q * 0.2); g.stroke(); g.strokeStyle = trait; g.lineWidth = 0.9; }
+    // Corps
+    g.fillStyle = sp.dos;
+    g.beginPath(); g.ellipse(0, corpsY, L, H, -0.12, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.save(); g.beginPath(); g.ellipse(0, corpsY, L, H, -0.12, 0, Math.PI * 2); g.clip();
+    g.fillStyle = sp.ventre; g.beginPath(); g.ellipse(L * 0.35, corpsY + H * 0.45, L * 0.75, H * 0.7, -0.25, 0, Math.PI * 2); g.fill();
+    if (sp.raies) { g.strokeStyle = 'rgba(90,60,30,0.5)'; g.lineWidth = 0.6; for (var k = 0; k < 4; k++) { g.beginPath(); g.moveTo(L * 0.1 + k * 1.2, corpsY + 1); g.lineTo(L * 0.1 + k * 1.2 - 0.5, corpsY + 3); g.stroke(); } }
+    g.fillStyle = 'rgba(255,255,255,0.18)'; g.beginPath(); g.ellipse(-L * 0.1, corpsY - H * 0.5, L * 0.6, H * 0.3, -0.1, 0, Math.PI * 2); g.fill();
+    g.restore();
+    // Tête : se tourne, picore
+    var tx = L * 0.72, ty = corpsY - H * 0.78, rt = H * 0.62;
+    g.save();
+    g.translate(tx, ty + pic * H * 0.9); g.rotate(pic * 0.9);
+    var tourne = o.tete || 0;
+    g.fillStyle = sp.tete; g.beginPath(); g.arc(0, 0, rt, 0, Math.PI * 2); g.fill(); g.stroke();
+    if (sp.masque) { g.fillStyle = '#ffffff'; g.beginPath(); g.ellipse(rt * 0.25, rt * 0.25, rt * 0.6, rt * 0.4, 0, 0, Math.PI * 2); g.fill(); g.fillStyle = '#2b3c66'; g.beginPath(); g.ellipse(rt * 0.2, rt * 0.75, rt * 0.4, rt * 0.2, 0, 0, Math.PI * 2); g.fill(); }
+    if (sp.collier) { g.strokeStyle = '#2a2420'; g.lineWidth = 1.2; g.beginPath(); g.arc(0, 0, rt * 1.05, Math.PI * 0.45, Math.PI * 0.85); g.stroke(); g.strokeStyle = trait; g.lineWidth = 0.9; }
+    if (sp.reflet) { g.strokeStyle = sp.reflet; g.lineWidth = 0.8; g.beginPath(); g.arc(-rt * 0.1, -rt * 0.1, rt * 0.6, Math.PI * 1.1, Math.PI * 1.6); g.stroke(); g.strokeStyle = trait; g.lineWidth = 0.9; }
+    var bx2 = rt * (0.85 - Math.abs(tourne) * 0.5);
+    // Bec (vu de face quand la tête se tourne vers nous)
+    g.fillStyle = sp.bc;
+    g.beginPath(); g.moveTo(bx2, -rt * 0.25); g.lineTo(bx2 + sp.b * (1 - Math.abs(tourne) * 0.55), rt * 0.05 + (sp.gros ? 0.4 : 0)); g.lineTo(bx2, rt * 0.3); g.closePath(); g.fill(); g.stroke();
+    if (o.brindille) { g.strokeStyle = '#8a5a2c'; g.lineWidth = 1.1; g.beginPath(); g.moveTo(bx2 - 1, rt * 0.2); g.lineTo(bx2 + 6, rt * 0.6); g.moveTo(bx2 + 3, rt * 0.4); g.lineTo(bx2 + 4.5, rt * -0.4); g.stroke(); g.strokeStyle = trait; g.lineWidth = 0.9; }
+    // Œil(s)
+    var oeilX = rt * (0.3 - tourne * 0.15);
+    g.fillStyle = sp.oeilC || '#fff'; if (sp.oeilC) { g.beginPath(); g.arc(oeilX, -rt * 0.22, rt * 0.34, 0, Math.PI * 2); g.fill(); }
+    g.fillStyle = '#100a08'; g.beginPath(); g.arc(oeilX, -rt * 0.22, rt * 0.24, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(oeilX + rt * 0.08, -rt * 0.32, rt * 0.09, 0, Math.PI * 2); g.fill();
+    if (Math.abs(tourne) > 0.5) { g.fillStyle = '#100a08'; g.beginPath(); g.arc(oeilX - rt * 0.55, -rt * 0.22, rt * 0.2, 0, Math.PI * 2); g.fill(); }
+    g.restore();
+    // Aile proche
+    g.save(); g.translate(-L * 0.1, corpsY - H * 0.15);
+    if (vol) {
+      g.rotate(bat * 0.9 + 0.2);
+      g.fillStyle = sp.aile;
+      g.beginPath(); g.moveTo(-1, 0); g.quadraticCurveTo(-4, -L * 1.2, -L * 0.3, -L * 1.5); g.quadraticCurveTo(L * 0.5, -L, L * 0.6, 0); g.closePath(); g.fill(); g.stroke();
+      g.strokeStyle = 'rgba(255,255,255,0.3)'; g.lineWidth = 0.6;
+      for (var pl = 0; pl < 3; pl++) { g.beginPath(); g.moveTo(pl * 1.2 - 1, -1); g.lineTo(-L * 0.2 + pl * 1.5, -L * 1.1 + pl); g.stroke(); }
+    } else {
+      g.rotate(-0.15);
+      g.fillStyle = sp.aile;
+      g.beginPath(); g.moveTo(L * 0.45, -H * 0.35); g.quadraticCurveTo(L * 0.1, H * 0.7, -L * 0.85, H * 0.45); g.quadraticCurveTo(-L * 0.4, -H * 0.5, L * 0.45, -H * 0.35); g.closePath(); g.fill(); g.stroke();
+      if (sp.pie) { g.fillStyle = '#f6f6f2'; g.beginPath(); g.ellipse(L * 0.1, -H * 0.05, L * 0.28, H * 0.22, -0.2, 0, Math.PI * 2); g.fill(); }
+      g.strokeStyle = 'rgba(255,255,255,0.28)'; g.lineWidth = 0.6;
+      for (var pl2 = 0; pl2 < 3; pl2++) { g.beginPath(); g.moveTo(-L * 0.2 + pl2 * 1.4, H * 0.05 + pl2 * 0.5); g.lineTo(-L * 0.7 + pl2 * 1.2, H * 0.35 + pl2 * 0.2); g.stroke(); }
+    }
+    g.restore();
+  }
+  function dessinerUnOiseau(o) {
+    var gxo = Math.floor(o.wx), gyo = Math.floor(o.wy), P = ecran(o.wx, o.wy), k = TW / 100;
+    var hs = o.etat === 'perche' || (o.etat === 'vol' && !o.sol && o.t / o.duree > 0.5) ? hauteur(o.gx, o.gy) : hauteur(gxo, gyo);
+    var x = P.x, y = P.y - hs * TH - o.z * TW, vol = o.etat === 'vol' || o.etat === 'fuite';
+    if (o.etat === 'sol' && o.z < 0.02) { ctx.fillStyle = 'rgba(30,24,64,0.22)'; ctx.beginPath(); ctx.ellipse(x, y + k, 5 * k * o.sp.t, 2 * k * o.sp.t, 0, 0, Math.PI * 2); ctx.fill(); }
+    ctx.save();
+    if (o.etat === 'fuite') ctx.globalAlpha = Math.max(0, Math.min(1, 4 - o.t));
+    ctx.translate(x, y);
+    var sx = Math.abs(o.sx) < 0.3 ? (o.sx < 0 ? -0.3 : 0.3) : o.sx;
+    ctx.scale(sx * k * o.sp.t * 0.95, k * o.sp.t * 0.95);
+    if (vol) ctx.rotate(-0.12);
+    dessinerOiseau(ctx, o.sp, o, vol);
+    ctx.restore();
   }
 
   // ---------- Papillons : se posent sur les fleurs, s'envolent quand on approche ----------
   function fleurEn(gx, gy) {
     var cx = Math.floor(gx / C), cy = Math.floor(gy / C), t = terrain(cx, cy), i = (gy - cy * C) * C + (gx - cx * C);
-    return t.fleurs[i] && !t.arbre[i] && !t.rocher[i];
+    return t.fleurs[i] && !t.arbre[i] && !t.rocher[i] ? t.fleurs[i] : 0;
   }
+  // Position exacte d'une des fleurs dessinées sur le bloc (mêmes tirages que dessinerFleurs)
+  function fleurPos(gx, gy) {
+    var nb = fleurEn(gx, gy);
+    if (!nb) return null;
+    var k = Math.floor(Math.random() * nb);
+    var u = 0.15 + hasard2(gx * 13 + k * 7, gy * 5 - k * 3) * 0.7, v = 0.15 + hasard2(gx * 3 - k * 11, gy * 17 + k * 5) * 0.7;
+    return { x: gx + u, y: gy + v };
+  }
+  var Z_FLEUR = 0.20;
   function majPapillons(dt) {
     papTimer -= dt;
     if (papTimer <= 0) {
@@ -3036,7 +3356,8 @@
         for (var essai = 0; essai < 30; essai++) {
           var gx = Math.floor(camera.x + (Math.random() - 0.5) * 18), gy = Math.floor(camera.y + (Math.random() - 0.5) * 18);
           if (Math.abs(gx + 0.5 - joueur.x) + Math.abs(gy + 0.5 - joueur.y) < 3 || !fleurEn(gx, gy)) continue;
-          papillons.push({ wx: gx + 0.5 + (Math.random() - 0.5) * 0.3, wy: gy + 0.5 + (Math.random() - 0.5) * 0.3, z: 0.1, etat: 'pose', t: Math.random() * 5,
+          var fp = fleurPos(gx, gy);
+          papillons.push({ wx: fp.x, wy: fp.y, z: Z_FLEUR, etat: 'pose', t: Math.random() * 5,
             vol: 0, ang: Math.random() * 6.28, pal: PAL_PAP[Math.floor(Math.random() * PAL_PAP.length)], cible: null });
           break;
         }
@@ -3047,28 +3368,28 @@
       p.t += dt;
       var dj = Math.sqrt((p.wx - joueur.x) * (p.wx - joueur.x) + (p.wy - joueur.y) * (p.wy - joueur.y));
       if (p.etat === 'pose') {
-        if (dj < 1.3 || vent.force > 0.7) { p.etat = 'vol'; p.vol = 2.5 + Math.random() * 3; p.ang = Math.atan2(p.wy - joueur.y, p.wx - joueur.x) + (Math.random() - 0.5); }
+        if (dj < 1.4 || vent.force > 0.7) { p.etat = 'vol'; p.vol = 2.5 + Math.random() * 3; p.haut = 0.9 + Math.random() * 0.7; p.ang = Math.atan2(p.wy - joueur.y, p.wx - joueur.x) + (Math.random() - 0.5); }
       } else if (p.etat === 'vol') {
         p.ang += (Math.random() - 0.5) * dt * 6;
         p.wx += Math.cos(p.ang) * 1.3 * dt + vent.force * 1.2 * dt; p.wy += Math.sin(p.ang) * 1.3 * dt - vent.force * 1.2 * dt;
-        p.z += ((0.55 + Math.sin(p.t * 3) * 0.15) - p.z) * Math.min(1, dt * 3);
+        p.z += (((p.haut || 0.7) + Math.sin(p.t * 3) * 0.15) - p.z) * Math.min(1, dt * 2.5);
         p.vol -= dt;
         if (p.vol <= 0) {
           // Chercher une autre fleur, sinon partir
           p.cible = null;
           for (var e = 0; e < 25 && !p.cible; e++) {
             var fx = Math.floor(p.wx + (Math.random() - 0.5) * 9), fy = Math.floor(p.wy + (Math.random() - 0.5) * 9);
-            if (fleurEn(fx, fy) && Math.abs(fx + 0.5 - joueur.x) + Math.abs(fy + 0.5 - joueur.y) > 2.5) p.cible = { x: fx + 0.5, y: fy + 0.5 };
+            if (fleurEn(fx, fy) && Math.abs(fx + 0.5 - joueur.x) + Math.abs(fy + 0.5 - joueur.y) > 2.5) p.cible = fleurPos(fx, fy);
           }
           p.etat = p.cible ? 'retour' : 'depart';
         }
       } else if (p.etat === 'retour') {
         var dx = p.cible.x - p.wx, dy = p.cible.y - p.wy, d = Math.sqrt(dx * dx + dy * dy);
-        if (d < 0.05) { p.etat = 'pose'; p.z = 0.1; }
+        if (d < 0.04 && p.z < Z_FLEUR + 0.06) { p.etat = 'pose'; p.z = Z_FLEUR; p.wx = p.cible.x; p.wy = p.cible.y; }
         else {
           var v = Math.min(d, 1.4 * dt);
           p.wx += dx / d * v + Math.sin(p.t * 7) * 0.2 * dt; p.wy += dy / d * v;
-          p.z += ((d < 0.6 ? 0.1 : 0.5) - p.z) * Math.min(1, dt * 3);
+          p.z += ((d < 0.5 ? Z_FLEUR : 0.6) - p.z) * Math.min(1, dt * 3);
         }
         if (dj < 1.0) { p.etat = 'vol'; p.vol = 2; }
       } else {
@@ -3077,6 +3398,12 @@
       }
       if (Math.abs(p.wx - camera.x) + Math.abs(p.wy - camera.y) > 24) papillons.splice(n, 1);
     }
+  }
+  function dessinerUnPapillon(p) {
+    var k = TW / 100, P = solA(p.wx, p.wy), ouv = p.etat === 'pose' ? 0.55 + 0.45 * Math.cos(p.t * 2.2) : Math.abs(Math.cos(p.t * 20));
+    if (p.etat === 'pose') { ctx.fillStyle = 'rgba(30,24,64,0.16)'; ctx.beginPath(); ctx.ellipse(P.x + 2 * k, P.y + k, 3.5 * k, 1.4 * k, 0, 0, Math.PI * 2); ctx.fill(); }
+    else { ctx.fillStyle = 'rgba(30,24,64,' + (0.14 / (1 + p.z * 2)).toFixed(3) + ')'; ctx.beginPath(); ctx.ellipse(P.x, P.y, 3 * k, 1.2 * k, 0, 0, Math.PI * 2); ctx.fill(); }
+    dessinerPapillon(P.x, P.y - p.z * TW, k * 0.75, p.pal, ouv, p.etat === 'pose' ? 0.2 : Math.sin(p.t * 3) * 0.3);
   }
   function dessinerPapillon(x, y, sc, pal, ouv, ang) {
     ctx.save();
@@ -3132,22 +3459,6 @@
       ctx.stroke();
       ctx.restore();
     });
-    // Oiseaux en vol
-    oiseauxVol.forEach(function (o) {
-      var P = ecran(o.gx, o.gy), h = hauteur(o.gx, o.gy);
-      ctx.save();
-      ctx.globalAlpha = Math.min(1, o.vie);
-      ctx.translate(P.x + o.sx * TW, P.y + TH / 2 - h * TH - o.z * TW);
-      ctx.scale((o.vx < 0 ? -1 : 1) * k, k);
-      dessinerOiseau(ctx, o.pal, o.t, true);
-      ctx.restore();
-    });
-    // Papillons
-    papillons.forEach(function (p) {
-      var P = solA(p.wx, p.wy), ouv = p.etat === 'pose' ? 0.55 + 0.45 * Math.cos(p.t * 2.2) : Math.abs(Math.cos(p.t * 20));
-      if (p.etat === 'pose') { ctx.fillStyle = 'rgba(30,24,64,0.18)'; ctx.beginPath(); ctx.ellipse(P.x + 2 * k, P.y + k, 4 * k, 1.6 * k, 0, 0, Math.PI * 2); ctx.fill(); }
-      dessinerPapillon(P.x, P.y - p.z * TW, k * 0.8, p.pal, ouv, p.etat === 'pose' ? 0.25 : Math.sin(p.t * 3) * 0.3);
-    });
   }
 
   var dernier = 0;
@@ -3155,7 +3466,7 @@
     var dt = Math.min(0.05, (t - dernier) / 1000 || 0);
     dernier = t;
     maj(dt);
-    majVent(dt); majFeuilles(dt); majChutes(dt); majOiseaux(dt); majPapillons(dt); majArbresTombent(dt);
+    majVent(dt); majFeuilles(dt); majChutes(dt); majOiseaux(dt); majEtude(dt); majPapillons(dt); majArbresTombent(dt);
     majTerrains();
     majHud();
     majBlocs(dt);
@@ -3170,7 +3481,7 @@
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'low';
     dessinerMonde();
-    if (!file.length) dessinerVivants(t / 1000);
+    if (!file.length) { dessinerVivants(t / 1000); dessinerBullesEtude(t / 1000); }
     dessinerBulleA(t / 1000);
     W = WS; H = HS;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -3443,6 +3754,122 @@
     }).join('');
   }
 
+  // ---------- Observation : examiner un objet pour deviner à quoi il sert ----------
+  var INDICES = {
+    pierre: { dit: 'Je pourrais l\'aiguiser !', l: ['Je peux taper ce caillou contre une autre pierre pour l\'aiguiser.', 'Avec un manche et une ficelle, il ferait une bonne tête de massue.'] },
+    pierre_aiguisee: { dit: 'Ça coupe… parfait pour l\'écorce !', l: ['Son bord tranchant gratte l\'écorce des arbres.', 'Elle coupe les hautes herbes.', 'Je peux tailler une branche en manche avec.', 'Attachée à un manche avec une ficelle : une hache !'] },
+    pierre_abimee: { dit: 'Elle s\'effrite déjà…', l: ['Si je la frappe encore, elle va s\'abîmer davantage.'] },
+    pierre_tres_abimee: { dit: 'Encore un coup et c\'est de la poudre.', l: ['Frappée une dernière fois, elle deviendra de la poussière.'] },
+    poussiere: { dit: 'Une poudre très fine…', l: ['Je ne sais pas encore quoi en faire, mais je la garde.'] },
+    herbe: { dit: 'Je pourrais la tresser !', l: ['En tressant trois brins d\'herbe, j\'obtiens une ficelle.'] },
+    ficelle: { dit: 'Ça peut attacher des choses !', l: ['Avec deux morceaux de bois, je peux nouer un manche.', 'Elle fixe une pierre au bout d\'un manche.'] },
+    ecorce: { dit: 'Si j\'en serre plusieurs…', l: ['En frottant trois écorces ensemble, je peux les presser en un morceau de bois.'] },
+    bois: { dit: 'Assemblés, ça ferait un manche !', l: ['Deux morceaux de bois et une ficelle font un manche.'] },
+    branche: { dit: 'Un futur manche, ça !', l: ['Taillée avec une pierre aiguisée, elle devient un manche.'] },
+    manche: { dit: 'Il manque une tête…', l: ['Manche + ficelle + caillou : une massue.', 'Manche + ficelle + pierre aiguisée : une hache.'] },
+    massue: { dit: 'Lourde… de quoi briser un rocher !', l: ['Elle brise les gros rochers.', 'Elle aiguise les pierres plus vite qu\'un caillou.'] },
+    hache: { dit: 'Les arbres n\'ont qu\'à bien se tenir.', l: ['Elle abat les arbres (bois et branche en prime).', 'Elle coupe aussi les hautes herbes.'] },
+    pomme: { dit: 'Ça a l\'air bon !', l: ['Un fruit bien mûr. Je le garde pour plus tard.'] },
+    mirabelle: { dit: 'Petite et sucrée !', l: ['Un fruit bien mûr. Je le garde pour plus tard.'] }
+  };
+  var etudies = [];
+  function noterIndice(id) {
+    var neuf = etudies.indexOf(id) < 0;
+    if (neuf) etudies.push(id);
+    majIndices(id);
+  }
+  function majIndices(nouveau) {
+    var el = document.getElementById('carnetIndices');
+    if (!el) return;
+    if (!etudies.length) { el.innerHTML = '<p class="vide">Glisse un objet dans « Observer » : mes idées s\'écriront ici.</p>'; return; }
+    el.innerHTML = etudies.map(function (id) {
+      var ind = INDICES[id] || { l: ['Rien de particulier…'] };
+      return '<div class="fiche' + (id === nouveau ? ' neuve' : '') + '"><div class="titreF">' + ICONES[id] + NOMS[id] + '</div><ul>' +
+        ind.l.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
+    }).join('');
+    if (nouveau) { var f = el.querySelector('.neuve'); if (f) setTimeout(function () { f.scrollIntoView({ block: 'nearest' }); }, 50); }
+  }
+  function ongletCarnet(o) {
+    document.querySelectorAll('#carnet .onglets button').forEach(function (b) { b.classList.toggle('actif', b.dataset.o === o); });
+    document.getElementById('carnetListe').hidden = o !== 'recettes';
+    document.getElementById('carnetIndices').hidden = o !== 'indices';
+  }
+  // Durées de l'examen (s)
+  var ET = { leve: 0.7, regarde: 3.0, question: 3.9, eureka: 4.6, ecrit: 7.0, fin: 7.5 };
+  function etudier(id) {
+    var el = document.getElementById('etude');
+    el.classList.remove('ouvert'); el.setAttribute('aria-expanded', 'false');
+    setTimeout(function () {
+      basculerInventaire(false);
+      joueur.etude = { id: id, t: 0 };
+    }, 380);
+  }
+  function majEtude(dt) {
+    var e = joueur.etude;
+    if (!e) { joueur.etudeV += (0 - joueur.etudeV) * Math.min(1, dt * 8); return; }
+    e.t += dt;
+    joueur.etudeV += (1 - joueur.etudeV) * Math.min(1, dt * 8);
+    var ecart = Math.atan2(Math.sin(Math.PI / 4 - joueur.ang), Math.cos(Math.PI / 4 - joueur.ang));
+    joueur.ang += ecart * Math.min(1, dt * 9);
+    if (e.t >= ET.fin) {
+      joueur.etude = null;
+      var reste = ajouterObjet(e.id, 1);
+      if (reste) lacherObjet(e.id, joueur.x + 0.3, joueur.y + 0.3, 0.6);
+      noterIndice(e.id);
+      basculerInventaire(true);
+      setTimeout(function () { ongletCarnet('indices'); basculerCarnet(true); }, 650);
+    }
+  }
+  // Bulles au-dessus de la tête : « … », « ? », « ! » puis ce que le perso se dit
+  function dessinerBullesEtude(sec) {
+    var e = joueur.etude;
+    if (!e) return;
+    var p = ecran(joueur.x, joueur.y), U = TW * 0.707;
+    var x = p.x, y = p.y - joueur.h * TH - 1.62 * U, t = e.t;
+    function pop(t0, t1) { if (t < t0 || t > t1) return 0; var a = Math.min(1, (t - t0) / 0.18), b = Math.min(1, (t1 - t) / 0.15); return Math.min(a < 1 ? 1.25 * Math.sin(a * Math.PI / 2) : 1, b); }
+    ctx.save();
+    ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(1.5, TW * 0.022); ctx.strokeStyle = '#4a2a1a';
+    // Réflexion : petites bulles de pensée
+    var a1 = pop(1.6, ET.question);
+    if (a1 > 0) {
+      ctx.globalAlpha = Math.min(1, a1);
+      [[0.10, 0.10, 0.035], [0.17, -0.02, 0.05], [0.26, -0.16, 0.12]].forEach(function (b, n) {
+        if (t < 1.6 + n * 0.25) return;
+        ctx.fillStyle = '#fffaf0'; ctx.beginPath(); ctx.arc(x + b[0] * U, y + b[1] * U, b[2] * U, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      });
+      if (t > 2.1) { ctx.fillStyle = '#7a5a40'; for (var n = 0; n < 3; n++) { if ((t * 3 + n * 0.4) % 1.2 < 0.9 || true) { ctx.beginPath(); ctx.arc(x + (0.20 + n * 0.06) * U, y - 0.16 * U + Math.sin(sec * 6 + n) * 0.01 * U, 0.016 * U, 0, Math.PI * 2); ctx.fill(); } } }
+    }
+    function signe(car, coul, a, saute) {
+      if (a <= 0) return;
+      var r = 0.17 * U * a, yy = y - 0.05 * U - saute;
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#fff6e6';
+      ctx.beginPath(); ctx.moveTo(x - r * 0.3, yy + r * 0.8); ctx.lineTo(x - r * 0.05, yy + r * 1.4); ctx.lineTo(x + r * 0.35, yy + r * 0.75); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x, yy, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = coul; ctx.font = '900 ' + Math.round(r * 1.5) + 'px Nunito, ui-rounded, system-ui, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(car, x, yy + r * 0.06);
+    }
+    signe('?', '#3d7fd0', pop(ET.question - 0.9, ET.question + 0.05), 0);
+    var aE = pop(ET.question, ET.eureka + 0.3);
+    signe('!', '#e0532e', aE, aE > 0 ? Math.abs(Math.sin((t - ET.question) * 14)) * 0.05 * U * Math.max(0, 1 - (t - ET.question) * 1.5) : 0);
+    // Ce qu'il se dit
+    var aP = pop(ET.eureka - 0.2, ET.ecrit - 0.2), ind = INDICES[e.id];
+    if (aP > 0 && ind) {
+      var fz = Math.max(11, Math.round(TW * 0.085));
+      ctx.font = '800 ' + fz + 'px Nunito, ui-rounded, system-ui, sans-serif';
+      var txt = ind.dit, w = ctx.measureText(txt).width + fz * 1.4, h = fz * 2, bx = x + 0.32 * U, by = y - 0.10 * U - h / 2;
+      ctx.globalAlpha = Math.min(1, aP);
+      ctx.fillStyle = '#fffaf0';
+      ctx.beginPath();
+      ctx.moveTo(bx + 10, by + h); ctx.lineTo(bx - 0.14 * U, by + h + 0.12 * U); ctx.lineTo(bx + 22, by + h);
+      ctx.arcTo(bx + w, by + h, bx + w, by, h / 2); ctx.arcTo(bx + w, by, bx, by, h / 2); ctx.arcTo(bx, by, bx, by + h, h / 2); ctx.arcTo(bx, by + h, bx + w, by + h, h / 2);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#5b3b28'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(txt, bx + fz * 0.7, by + h / 2 + 1);
+    }
+    ctx.restore();
+  }
+
   // ---------- Déplacer les objets ----------
   // Glisser-déposer, ou clic pour prendre puis clic pour poser.
   // Clic droit : prend la moitié d'une pile (ou pose un seul objet de la main).
@@ -3463,6 +3890,7 @@
       if (el.dataset && el.dataset.m) return { t: 'main', m: el.dataset.m };
       if (el.dataset && el.dataset.uid) return { t: 'objetSol', uid: +el.dataset.uid };
       if (el.id === 'sol') return { t: 'sol' };
+      if (el.id === 'etudeCase') return { t: 'etude' };
       el = el.parentNode;
     }
     return null;
@@ -3477,6 +3905,15 @@
   function poser(c, x, y, unSeul) {
     if (!tenu || !c) return false;
     var n = unSeul ? 1 : tenu.nb, flash = null;
+    if (c.t === 'etude') {
+      // Un seul objet part à l'examen, le reste retourne à sa place
+      var idE = tenu.id;
+      tenu.nb -= 1;
+      if (tenu.nb <= 0) { tenu = null; origine = null; } else rangerMain();
+      majInventaire(); majCurseur();
+      etudier(idE);
+      return true;
+    }
     if (c.t === 'poche') {
       var o = poches[c.k];
       if (!o) { poches[c.k] = { id: tenu.id, nb: Math.min(n, MAX_POCHE) }; tenu.nb -= Math.min(n, MAX_POCHE); }
@@ -3575,11 +4012,29 @@
     depart = null;
   });
   var elCarnet = document.getElementById('carnet');
+  var elEtude = document.getElementById('etude');
+  function basculerEtude(ouvrir) {
+    elEtude.classList.toggle('ouvert', ouvrir);
+    elEtude.setAttribute('aria-expanded', ouvrir ? 'true' : 'false');
+    if (ouvrir) basculerCarnet(false);
+  }
+  elEtude.addEventListener('click', function (e) {
+    if (e.target.closest('.fermer')) { basculerEtude(false); e.stopPropagation(); return; }
+    if (!elEtude.classList.contains('ouvert')) basculerEtude(true);
+  });
+  elEtude.addEventListener('pointerdown', function (e) { if (e.target.closest('#etudeCase') && !tenu) e.stopPropagation(); });
+  window.addEventListener('pointermove', function (e) {
+    var c = document.getElementById('etudeCase');
+    c.classList.toggle('survol', !!tenu && !!e.target.closest && !!e.target.closest('#etudeCase'));
+  });
   function basculerCarnet(ouvrir) {
+    if (ouvrir && elEtude) { elEtude.classList.remove('ouvert'); elEtude.setAttribute('aria-expanded', 'false'); }
     elCarnet.classList.toggle('ouvert', ouvrir);
     elCarnet.setAttribute('aria-expanded', ouvrir ? 'true' : 'false');
   }
   elCarnet.addEventListener('click', function (e) {
+    var ong = e.target.closest('.onglets button');
+    if (ong) { ongletCarnet(ong.dataset.o); e.stopPropagation(); return; }
     if (e.target.closest('.fermer')) { basculerCarnet(false); e.stopPropagation(); return; }
     if (!elCarnet.classList.contains('ouvert')) basculerCarnet(true);
   });
@@ -3591,6 +4046,7 @@
 
   majInventaire();
   majCarnet();
+  majIndices();
 
   // Caillou le plus proche à portée de main
   function caillouProche() {
@@ -3666,7 +4122,7 @@
   function cotes(id) { return (mains.d && mains.d.id === id) ? 1 : (mains.g && mains.g.id === id) ? -1 : 0; }
   function mainAiguisee() { return cotes('pierre_aiguisee'); }
   function occupe() {
-    return joueur.ramasse || joueur.gratte || joueur.coupe || joueur.secoue || joueur.inventaire || joueur.fouille > 0 || joueur.chute;
+    return joueur.ramasse || joueur.gratte || joueur.coupe || joueur.secoue || joueur.inventaire || joueur.fouille > 0 || joueur.chute || joueur.etude;
   }
   function arbresProches(rayon, filtre) {
     var best = null, bd = rayon, bx = Math.floor(joueur.x), by = Math.floor(joueur.y);
@@ -3694,7 +4150,10 @@
     }
     return best;
   }
+  var TRANCHANTS = { pierre_aiguisee: 1, hache: 1, couteau: 1 };
+  function tranchantEnMain() { return (mains.d && TRANCHANTS[mains.d.id]) || (mains.g && TRANCHANTS[mains.g.id]); }
   function herbeProche() {
+    if (!tranchantEnMain()) return null;
     var best = null, bd = 0.8, bx = Math.floor(joueur.x), by = Math.floor(joueur.y);
     for (var y = by - 1; y <= by + 1; y++) for (var x = bx - 1; x <= bx + 1; x++) {
       var cx = Math.floor(x / C), cy = Math.floor(y / C), t = terrain(cx, cy), i = (y - cy * C) * C + (x - cx * C);
@@ -3949,15 +4408,15 @@
   }
 
   function basculerInventaire(ouvrir) {
-    if (ouvrir && (joueur.ramasse || joueur.gratte || joueur.coupe || joueur.secoue || joueur.chute)) return;
+    if (ouvrir && (joueur.ramasse || joueur.gratte || joueur.coupe || joueur.secoue || joueur.chute || joueur.etude)) return;
     joueur.inventaire = ouvrir;
     var el = document.getElementById('inventaire');
     clearTimeout(el._t);
     if (ouvrir) el._t = setTimeout(function () { el.classList.add('ouvert'); declencher = true; majFabrication(); }, 380);   // après l'accroupissement
-    else { el.classList.remove('ouvert'); basculerCarnet(false); arreterFrappe(); arreterFusion(); rangerMain(); deposerSol(); }
+    else { el.classList.remove('ouvert'); basculerCarnet(false); basculerEtude(false); arreterFrappe(); arreterFusion(); rangerMain(); deposerSol(); }
   }
   window.addEventListener('keydown', function (e) {
-    if (e.code === 'KeyE' && !e.repeat) { basculerInventaire(!joueur.inventaire); e.preventDefault(); }
+    if (e.code === 'KeyE' && !e.repeat) { if (!joueur.etude) basculerInventaire(!joueur.inventaire); e.preventDefault(); }
     // Touche A (quel que soit le clavier : A en AZERTY)
     else if ((e.key === 'a' || e.key === 'A') && !e.repeat) { lancerAction(); e.preventDefault(); }
     else if (e.code === 'KeyF' && !e.repeat) { lancerSecoue(); e.preventDefault(); }
