@@ -218,6 +218,15 @@
   #inventaire button.plier:focus-visible { outline: 2px solid #e9733f; border-radius: 6px; }
   #inventaire .fleche { margin-left: auto; transition: transform .2s; font-size: 22px; line-height: 1; color: #8a5a36; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; background: rgba(214,160,104,0.22); }
   #inventaire .blocSol.plie .fleche { transform: rotate(-90deg); }
+  #inventaire .titreSol { position: relative; }
+  #toutPrendre { position: absolute; right: 38px; top: 1px; border: 0; cursor: pointer; padding: 6px 9px; border-radius: 9px;
+    font: 800 11px/1 Nunito, ui-rounded, system-ui, sans-serif; color: #fff8ec;
+    background: linear-gradient(180deg, #8fb85e, #5f8f3a); box-shadow: inset 0 0 0 1.5px #2f4420, inset 0 2px 0 rgba(255,255,255,0.25), 0 2px 0 #2f4420; }
+  #toutPrendre:hover { filter: brightness(1.08); }
+  #toutPrendre:active { transform: translateY(1px); box-shadow: inset 0 0 0 1.5px #2f4420, 0 1px 0 #2f4420; }
+  #toutPrendre:disabled { opacity: .45; cursor: default; filter: grayscale(.5); }
+  #inventaire .blocSol.plie #toutPrendre { display: none; }
+  #toutPrendre:disabled { pointer-events: none; }
   #inventaire .plieur { position: relative; overflow: hidden; max-height: 260px; transition: max-height .25s ease; }
   #inventaire .blocSol.plie .plieur { max-height: 0; }
   #sol {
@@ -302,6 +311,15 @@
   #pause td { padding: 4px 8px; }
   #pause kbd { display: inline-block; min-width: 14px; margin: 0 2px; padding: 3px 6px; border-radius: 6px; text-align: center;
     font: 800 12px/1 Nunito, system-ui, sans-serif; color: #5b3b28; background: #fff6e6; box-shadow: inset 0 0 0 1.5px #7a4a26, 0 2px 0 #7a4a26; }
+  #pause .reglage { display: flex; align-items: center; justify-content: space-between; gap: 16px; font: 800 15px/1 Nunito, ui-rounded, system-ui, sans-serif; color: #5b3b28; cursor: pointer; margin-top: 4px; }
+  #pause .reglage input { position: absolute; opacity: 0; pointer-events: none; }
+  #pause .reglage i { position: relative; width: 44px; height: 24px; border-radius: 12px; background: #d9c3a0; box-shadow: inset 0 0 0 2px #7a4a26; transition: background .2s; }
+  #pause .reglage i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff6e6; box-shadow: 0 0 0 2px #7a4a26; transition: transform .2s; }
+  #pause .reglage input:checked + i { background: #7fbf4f; }
+  #pause .reglage input:checked + i::after { transform: translateX(20px); }
+  #pause .reglage input:focus-visible + i { outline: 2px solid #e9733f; outline-offset: 2px; }
+  #pause input[type=range] { width: 100%; accent-color: #a3623a; margin: 0 0 4px; }
+  #pause input[type=range]:disabled { opacity: .4; }
   #pause p { margin: 0 0 6px; font: 700 15px/1.4 Nunito, ui-rounded, system-ui, sans-serif; color: #5b3b28; }
   #infobulle {
     position: fixed; z-index: 11; display: none; pointer-events: none; padding: 4px 9px; border-radius: 9px;
@@ -361,7 +379,7 @@
     </div>
   </div>
   <div class="section blocSol plie">
-    <button class="titre plier" id="plierSol" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15l9-5 9 5-9 5z" fill="#c98a4b" stroke="#4a2a1a" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 13l2-4M14 11l2-5M11 12l0-6" stroke="#4f9a3a" stroke-width="1.8" stroke-linecap="round"/></svg>Sol<span class="fleche">▾</span></button>
+<div class="titreSol"><button class="titre plier" id="plierSol" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15l9-5 9 5-9 5z" fill="#c98a4b" stroke="#4a2a1a" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 13l2-4M14 11l2-5M11 12l0-6" stroke="#4f9a3a" stroke-width="1.8" stroke-linecap="round"/></svg>Sol<span class="fleche">▾</span></button><button id="toutPrendre" title="Tout ranger dans l'inventaire">Tout récupérer</button></div>
     <div class="plieur"><div id="sol"></div><div id="solFusion" aria-hidden="true"></div>
     <div id="solEffets" aria-hidden="true"></div></div>
   </div>
@@ -374,6 +392,7 @@
     <div class="vue" id="pauseMenu">
       <button id="pReprendre">Reprendre</button>
       <button id="pTouches">Touches</button>
+      <button id="pReglages">Paramètres</button>
       <button id="pQuitter" class="rouge">Quitter le jeu</button>
     </div>
     <div class="vue" id="pauseTouches" hidden>
@@ -388,6 +407,13 @@
         <tr><td><kbd>Échap</kbd></td><td>Pause</td></tr>
       </table>
       <button id="pRetour">Retour</button>
+    </div>
+    <div class="vue" id="pauseReglages" hidden>
+      <label class="reglage"><span>Musique</span><input type="checkbox" id="rMusique"><i></i></label>
+      <input type="range" id="rVolMus" min="0" max="1" step="0.05">
+      <label class="reglage"><span>Bruitages</span><input type="checkbox" id="rBruit"><i></i></label>
+      <input type="range" id="rVolFx" min="0" max="1" step="0.05">
+      <button id="pRetour2">Retour</button>
     </div>
     <div class="vue" id="pauseFin" hidden>
       <p>Partie quittée. À bientôt !</p>
@@ -616,8 +642,11 @@
     t.fleurs = new Uint8Array(C * C);    // nombre de fleurs (0 à 5)
     t.caillou = new Uint8Array(C * C);   // 0 = rien, sinon 1 + modèle de caillou
     t.rocher = new Uint8Array(C * C);    // 0 = rien, sinon 1 + modèle de gros rocher
+    t.eau = new Uint8Array(C * C);       // 1 = rivière, 2 = étang
     for (i = 0; i < C * C; i++) {
       var ax = cx * C + i % C, ay = cy * C + (i / C | 0);
+      var eauIci = eauMonde(ax, ay);
+      if (eauIci) { t.eau[i] = eauIci; t.herbe[i] = 0; continue; }
       var a = arbreMonde(ax, ay);
       if (a) { t.arbre[i] = a; t.herbe[i] = 0; continue; }
       // Gros rochers : occupent tout un bloc, plus rares que les petites pierres
@@ -632,8 +661,57 @@
       }
     }
     t.h = new Float32Array(C * C);
-    for (i = 0; i < C * C; i++) t.h[i] = relief(cx * C + i % C, cy * C + (i / C | 0));
+    for (i = 0; i < C * C; i++) t.h[i] = t.eau[i] ? niveauEau(cx * C + i % C, cy * C + (i / C | 0)) : relief(cx * C + i % C, cy * C + (i / C | 0));
     return t;
+  }
+
+  // ---------- Eau : rivières sinueuses et petits étangs ----------
+  function eauMonde(gx, gy) {
+    if (Math.abs(gx + 0.5 - C / 2) < 5 && Math.abs(gy + 0.5 - C / 2) < 5) return 0;
+    if (relief(gx, gy) > PAS_RELIEF * 2.5) return 0;                 // pas au sommet des collines
+    var r = bruitDoux(gx / 40 + 411.3, gy / 40 - 77.9) * 0.85 + bruitMonde(gx / 11 + 9.1, gy / 11 + 3.3) * 0.15;
+    if (Math.abs(r - 0.5) < 0.011) return 1;
+    var e = bruitDoux(gx / 8 - 210.7, gy / 8 + 61.4);
+    if (e > 0.86 && foretEn(gx, gy) < 0.6 && bruitMonde(gx / 30 + 5.5, gy / 30 - 8.8) > 0.55) return 2;
+    return 0;
+  }
+  // L'eau est un peu plus basse que les berges : on voit la terre des rives
+  function niveauEau(gx, gy) {
+    var m = relief(gx, gy);
+    for (var j = -1; j <= 1; j++) for (var i = -1; i <= 1; i++) m = Math.min(m, relief(gx + i, gy + j));
+    return m - PAS_RELIEF * 1.35;
+  }
+  function eauEn(gx, gy) {
+    var cx = Math.floor(gx / C), cy = Math.floor(gy / C);
+    return terrain(cx, cy).eau[(gy - cy * C) * C + (gx - cx * C)];
+  }
+  // Dessus d'un bloc d'eau : bleu profond au centre, plus clair et mousseux le long des rives
+  function dessinerEauBloc(g, X, ay, gx, gy) {
+    var bx = X + TW / 2, dx = X - TW / 2, my = ay + TH / 2, cy = ay + TH;
+    g.save();
+    g.beginPath(); g.moveTo(X, ay); g.lineTo(bx, my); g.lineTo(X, cy); g.lineTo(dx, my); g.closePath();
+    g.fillStyle = '#3784b8'; g.fill();
+    g.strokeStyle = '#3784b8'; g.lineWidth = Math.max(1, TW * 0.012); g.stroke();      // couvre les joints entre blocs d'eau
+    g.clip();
+    // reflets du ciel
+    g.strokeStyle = 'rgba(220,240,255,0.30)'; g.lineWidth = Math.max(1, TW * 0.018); g.lineCap = 'round';
+    for (var k = 0; k < 3; k++) {
+      var u = hasard2(gx * 7 + k, gy * 5 - k), v = hasard2(gx * 3 - k, gy * 11 + k);
+      var px = X + (u - v) * TW / 2, py = ay + (u + v) * TH / 2, L = TW * (0.08 + hasard2(gx + k, gy) * 0.1);
+      g.beginPath(); g.moveTo(px - L, py); g.quadraticCurveTo(px, py - TH * 0.04, px + L, py); g.stroke();
+    }
+    // rives : bande claire et un peu d'écume côté terre
+    var cotes = [[gx - 1, gy, X, ay, dx, my], [gx, gy - 1, X, ay, bx, my], [gx + 1, gy, bx, my, X, cy], [gx, gy + 1, dx, my, X, cy]];
+    cotes.forEach(function (c) {
+      if (eauEn(c[0], c[1])) return;
+      g.strokeStyle = 'rgba(160,215,235,0.75)'; g.lineWidth = TW * 0.07;
+      g.beginPath(); g.moveTo(c[2], c[3]); g.lineTo(c[4], c[5]); g.stroke();
+      g.strokeStyle = 'rgba(255,255,255,0.55)'; g.lineWidth = TW * 0.018;
+      g.setLineDash([TW * 0.04, TW * 0.05]);
+      g.beginPath(); g.moveTo(c[2], c[3] + TH * 0.06); g.lineTo(c[4], c[5] + TH * 0.06); g.stroke();
+      g.setLineDash([]);
+    });
+    g.restore();
   }
 
   // ---------- Relief ----------
@@ -786,7 +864,7 @@
     haut.forEach(function (h, kk) {
       var bx = Math.floor(kk / 1048576) - DECAL, by = kk % 1048576 - DECAL;
       var d = distanceBloc(bx, by), cible;
-      if (d < RAYON) { cible = CREUX; touche.add(kk); }
+      if (d < RAYON && !eauEn(bx, by)) { cible = CREUX; touche.add(kk); }
       else cible = 0;      // les blocs voisins ne bougent pas
       h += (cible - h) * v;
       if (cible === 0 && Math.abs(h) < 0.002) haut.delete(kk); else haut.set(kk, h);
@@ -1077,17 +1155,21 @@
     var fd = h > hd + 0.002, fg = h > hg + 0.002;
     if (fd) flanc(g, e, ox, oy, X, cy, bx, my, h - hd, true, vd);
     if (fg) flanc(g, e, ox, oy, dx, my, X, cy, h - hg, false, vg);
-    var im = tex[t.variante[i]], a = e * TW / 2 / TEX_T, b = e * TH / 2 / TEX_T;
-    if (g === ctx) im = mipPour(im, e * TW * 0.707);
-    if (t.miroir[i]) g.setTransform(-a, b, a, b, e * X + ox, e * ay + oy);
-    else g.setTransform(a, b, -a, b, e * X + ox, e * ay + oy);
-    g.drawImage(im, 0, 0);
-    g.setTransform(e, 0, 0, e, ox, oy);
+    var estEau = t.eau && t.eau[i];
+    if (estEau) dessinerEauBloc(g, X, ay, gx, gy);
+    else {
+      var im = tex[t.variante[i]], a = e * TW / 2 / TEX_T, b = e * TH / 2 / TEX_T;
+      if (g === ctx) im = mipPour(im, e * TW * 0.707);
+      if (t.miroir[i]) g.setTransform(-a, b, a, b, e * X + ox, e * ay + oy);
+      else g.setTransform(a, b, -a, b, e * X + ox, e * ay + oy);
+      g.drawImage(im, 0, 0);
+      g.setTransform(e, 0, 0, e, ox, oy);
+    }
     g.beginPath();
     g.moveTo(X, ay); g.lineTo(bx, my); g.lineTo(X, cy); g.lineTo(dx, my);
     g.closePath();
     if (enfonce) { g.fillStyle = 'rgba(40,60,20,0.14)'; g.fill(); }
-    if (tapis.length) collerTapis(g, t.variante[i] % NB_TAPIS, t.miroir[i], X, ay);
+    if (tapis.length && !estEau) collerTapis(g, t.variante[i] % NB_TAPIS, t.miroir[i], X, ay);
     dessinerFleurs(g, t.fleurs[i], gx, gy, X, ay);
     // Ombre au pied d'une marche : quand le bloc de devant est plus haut, il cache une
     // descente vers le fond ; une ombre douce la rend lisible
@@ -1806,12 +1888,13 @@
     }
     // Petites bêtes sur le rocher
     var hr = HAUT_ROCHER[(code - 1) % 4], hz = hasard2(gx * 19 + 4, gy * 23 - 1);
-    if (hz < 0.45) {
+    var cachees = abri();
+    if (hz < 0.45 && !cachees) {
       var cyc = (tps * 0.12 + hz * 7) % 2, u = cyc < 1 ? cyc : 2 - cyc, sens = cyc < 1 ? 1 : -1;
       millePattes(tps, -28 + u * 50, -hr * 0.55 + Math.sin(u * 3.1) * -6, 9, sens);
     }
-    if (hz > 0.55 && hz < 0.8) { var ua = tps * 0.25 + hz * 10; coccinelle(Math.sin(ua) * 14, -hr * 0.85 + Math.cos(ua * 0.7) * 3, ua + Math.PI / 2); }
-    if (hz > 0.7) mouches(tps, 6, -hr - 10, 3, hz * 20);
+    if (hz > 0.55 && hz < 0.8 && !cachees) { var ua = tps * 0.25 + hz * 10; coccinelle(Math.sin(ua) * 14, -hr * 0.85 + Math.cos(ua * 0.7) * 3, ua + Math.PI / 2); }
+    if (hz > 0.7 && !cachees) mouches(tps, 6, -hr - 10, 3, hz * 20);
     ctx.restore();
   }
   function dessinerSouche(gx, gy) {
@@ -1857,6 +1940,7 @@
   function silhouetteJoueur(g) {
     var p = ecran(joueur.x, joueur.y);
     p.y -= joueur.h * TH;
+    p.y += (joueur.dansEau || 0) * TW * 0.707 * 0.30;
     var hp = TW * 0.707 * (1.35 - 0.35 * joueur.fouille - 0.25 * joueur.penche);   // hauteur du perso
     var fx = p.x + hp * SOL_X, fy = p.y + hp * SOL_Y;
     var ang = Math.atan2(fy - p.y, fx - p.x), lon = Math.sqrt((fx - p.x) * (fx - p.x) + (fy - p.y) * (fy - p.y));
@@ -2016,11 +2100,11 @@
     if (nidSur(gx, gy)) dessinerNid(gx, gy, code);
     // Araignée qui descend d'une branche, mouches autour des fruits
     var hi = hasard2(gx * 13 - 7, gy * 11 + 3), fA = feuillages[code - 1];
-    if (fA && fA.length && hi < 0.14) {
+    if (fA && fA.length && hi < 0.14 && !abri()) {
       var bas2 = fA.reduce(function (m, q) { return q.y + q.r > m.y + m.r ? q : m; }, fA[0]);
       araignee(tpsA, bas2.x + (hi - 0.07) * 60, bas2.y + bas2.r * 0.7, hi * 50);
     }
-    if (fA && fA.length && essenceDe(code) === 'fruitier' && hi > 0.6) mouches(tpsA, fA[0].x, fA[0].y + fA[0].r * 0.8, 3 + (hi > 0.8 ? 1 : 0), hi * 40);
+    if (fA && fA.length && essenceDe(code) === 'fruitier' && hi > 0.6 && !abri()) mouches(tpsA, fA[0].x, fA[0].y + fA[0].r * 0.8, 3 + (hi > 0.8 ? 1 : 0), hi * 40);
     ctx.restore();
   }
   // Écorçage : une seule zone au milieu du tronc, qu'on épluche petit à petit.
@@ -2127,7 +2211,7 @@
           g.lineTo(X - TW / 2, ay + TH / 2 + Math.max(0, hh - hg) * TH);
           g.lineTo(X - TW / 2, ay + TH / 2);
           g.closePath(); g.fill();
-          if (tapis.length) collerTapis(g, t.variante[i] % NB_TAPIS, t.miroir[i], X, ay);
+          if (tapis.length && !t.eau[i]) collerTapis(g, t.variante[i] % NB_TAPIS, t.miroir[i], X, ay);
         });
       }
       if (t.herbe[i]) occultants.push(function (g) { collerTouffe(g, t.herbe[i], t.miroir[i], X, ay); });
@@ -2183,6 +2267,7 @@
     function placerJoueur() {
       fait = true;
       dessinerJoueurDecoupe(occultants);
+      dessinerEauAutourJoueur();
       dessinerCopeaux();
       styleTraits(ctx);
       for (var m = 0; m < attente.length; m++) attente[m]();
@@ -2199,6 +2284,8 @@
     function ranger(prof, f) { var l = betes.get(prof); if (!l) betes.set(prof, l = []); l.push(f); }
     oiseaux.forEach(function (o) { ranger(o.etat === 'perche' || (o.etat === 'vol' && !o.sol && o.brindille) ? o.gx + o.gy : Math.floor(o.wx) + Math.floor(o.wy), dessinerUnOiseau.bind(null, o)); });
     papillons.forEach(function (q) { ranger(Math.floor(q.wx) + Math.floor(q.wy), dessinerUnPapillon.bind(null, q)); });
+    animaux.forEach(function (q) { ranger(Math.floor(q.wx) + Math.floor(q.wy), dessinerUnAnimal.bind(null, q)); });
+    var tpsEau = performance.now() / 1000;
     for (somme = sMin; somme <= sMax; somme++) {
       if (!fait && somme > sMaxPieds) placerJoueur();
       var devant = somme + 1 > profJoueur;
@@ -2206,6 +2293,7 @@
       if (((somme - d0) % 2 + 2) % 2 === 1) d0++;
       for (var diff = d0; diff <= dMax; diff += 2) {
         gx = (somme + diff) / 2; gy = (somme - diff) / 2;
+        if (eauEn(gx, gy)) { dessinerEauVivante(gx, gy, tpsEau); continue; }
         if (objetsMonde.size && objetsMonde.has(gx + ',' + gy)) {
           if (!fait && devant) attente.push(dessinerObjetsMonde.bind(null, gx, gy));
           else dessinerObjetsMonde(gx, gy);
@@ -2590,6 +2678,8 @@
   function dessinerJoueur() {
     var p = ecran(joueur.x, joueur.y);
     p.y -= joueur.h * TH;
+    var eauJ = joueur.dansEau || 0;
+    p.y += eauJ * TW * 0.707 * 0.30;          // enfoncé dans l'eau
     var amp = joueur.amp, allure = joueur.allure, ph = joueur.phase, tps = joueur.temps;
     var F0 = Math.cos(joueur.ang), F1 = Math.sin(joueur.ang);      // avant, dans la grille
     var R0 = -F1, R1 = F0;                                           // côté
@@ -2942,6 +3032,13 @@
         main = { x: mF.x, y: mF.y, d: main.d + 0.4 };
         coude = { x: cF.x, y: cF.y, d: coude.d };
       }
+      if (eauJ > 0.05 && !joueur.inventaire) {
+        // Bras écartés, qui brassent l'eau pour avancer
+        var brasse = Math.sin(tps * (amp > 0.1 ? 7 : 2.5) + (c > 0 ? 0 : Math.PI));
+        var mW = P(0.12 + brasse * 0.10, c * 0.40, 0.62 + zb + Math.abs(brasse) * 0.06), cW = P(0.04, c * 0.33, 0.74 + zb);
+        main = { x: main.x + (mW.x - main.x) * eauJ, y: main.y + (mW.y - main.y) * eauJ, d: main.d };
+        coude = { x: coude.x + (cW.x - coude.x) * eauJ, y: coude.y + (cW.y - coude.y) * eauJ, d: coude.d };
+      }
       if (c === (joueur.mainRamasse || 1)) mainDroite = main;
       var tenuMain = mains[c > 0 ? 'd' : 'g'];
       if (c > 0 && levee > 0.3) tenuMain = { id: joueur.etude.id, nb: 1, examen: true };
@@ -3240,7 +3337,10 @@
     // Transitions douces : repos <-> marche <-> course
     joueur.amp += ((bouge ? 1 : 0) - joueur.amp) * Math.min(1, dt * 12);
     joueur.allure += ((court ? 1 : 0) - joueur.allure) * Math.min(1, dt * 7);
-    var cible = bouge ? VITESSE * (1 + (COURSE - 1) * joueur.allure) : 0;
+    var dansEauIci = eauEn(Math.floor(joueur.x), Math.floor(joueur.y)) ? 1 : 0;
+    joueur.dansEau = (joueur.dansEau || 0) + (dansEauIci - (joueur.dansEau || 0)) * Math.min(1, dt * 5);
+    var cible = bouge ? VITESSE * (1 + (COURSE - 1) * joueur.allure) * (1 - 0.6 * joueur.dansEau) : 0;
+    if (bouge && joueur.dansEau > 0.5) { joueur.sonEau = (joueur.sonEau || 0) - dt; if (joueur.sonEau <= 0) { joueur.sonEau = 0.42; SON.jouer('eau'); ronds.push({ x: joueur.x, y: joueur.y, t: 0 }); } }
     joueur.vitesse += (cible - joueur.vitesse) * Math.min(1, dt * 14);
     if (bouge) joueur.phase += dt * (9.5 + 6.5 * joueur.allure);
     else if (joueur.amp < 0.02) joueur.phase = 0;
@@ -3438,24 +3538,52 @@
   }
   // Nid de brindilles posé sur la couronne de l'arbre (unités du sprite)
   function dessinerNid(gx, gy, code) {
-    var pt = perchoir(gx, gy, code), x = pt.x, y = pt.y + 1.5;
-    ctx.save();
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.fillStyle = '#5a3a1e'; ctx.strokeStyle = '#2e1a0a'; ctx.lineWidth = 1.4;
-    ctx.beginPath(); ctx.ellipse(x, y, 8.5, 4.2, 0, 0, Math.PI); ctx.lineTo(x - 8.5, y - 0.5); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.strokeStyle = '#a07445'; ctx.lineWidth = 0.9;
-    for (var n = 0; n < 9; n++) {
-      var a = n / 9 * Math.PI, rx = Math.cos(a) * 8, ry = Math.sin(a) * 3.6;
-      ctx.beginPath(); ctx.moveTo(x + rx - 2.4, y + ry * 0.6 - 0.5); ctx.lineTo(x + rx + 2.6, y + ry * 0.8 + 0.6); ctx.stroke();
+    var pt = perchoir(gx, gy, code), x = pt.x, y = pt.y + 1.5, sp = especeNid(gx, gy).n, r = aleatoire(gx * 131 + gy * 17);
+    var g = ctx;
+    g.save();
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    function brindilles(cx, cy, rx, ry, nb, coul, ep) {
+      g.strokeStyle = coul; g.lineWidth = ep;
+      for (var n = 0; n < nb; n++) {
+        var a = r() * Math.PI, px = cx + Math.cos(a) * rx * r(), py = cy + Math.sin(a) * ry * r(), l = 2 + r() * 3.5, an = (r() - 0.5) * 1.2;
+        g.beginPath(); g.moveTo(px - Math.cos(an) * l, py - Math.sin(an) * l); g.lineTo(px + Math.cos(an) * l, py + Math.sin(an) * l); g.stroke();
+      }
     }
-    ctx.strokeStyle = '#7a5230'; ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.ellipse(x, y - 0.4, 8, 2.4, 0, Math.PI, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = '#3a2412'; ctx.beginPath(); ctx.ellipse(x, y - 0.2, 6, 1.6, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
+    if (sp === 'corbeau' || sp === 'pie') {
+      // grand nid de branches, en dôme pour la pie
+      g.fillStyle = '#4a3220'; g.strokeStyle = '#1e140a'; g.lineWidth = 1.4;
+      g.beginPath(); g.ellipse(x, y + 1, 12, 5.5, 0, 0, Math.PI); g.lineTo(x - 12, y); g.closePath(); g.fill(); g.stroke();
+      if (sp === 'pie') { g.beginPath(); g.ellipse(x, y - 1, 10, 9, 0, Math.PI, Math.PI * 2); g.fill(); g.stroke(); brindilles(x, y - 4, 9, 6, 16, '#7a5432', 1.1); g.fillStyle = '#1a1008'; g.beginPath(); g.ellipse(x + 4, y - 3, 2.6, 2.2, 0, 0, Math.PI * 2); g.fill(); }
+      brindilles(x, y + 1.5, 12, 4, 22, '#6a4a2a', 1.3);
+      g.strokeStyle = '#3a2614'; g.lineWidth = 1.6;
+      for (var n = 0; n < 5; n++) { var a0 = (n / 5) * Math.PI; g.beginPath(); g.moveTo(x + Math.cos(a0) * 13, y + 1 + Math.sin(a0) * 3); g.lineTo(x + Math.cos(a0) * 17, y + 2 + Math.sin(a0) * 5); g.stroke(); }
+    } else if (sp === 'mesange' || sp === 'moineau') {
+      // boule tressée avec une petite entrée sur le côté
+      var paille = sp === 'moineau';
+      g.fillStyle = paille ? '#c9a964' : '#7d9a52'; g.strokeStyle = '#2e2412'; g.lineWidth = 1.2;
+      g.beginPath(); g.ellipse(x, y - 3, 7.5, 7, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+      brindilles(x, y - 3, 6.5, 6, 18, paille ? '#e3cc8a' : '#a6c27a', 0.8);
+      brindilles(x, y - 3, 6.5, 6, 10, paille ? '#8a7038' : '#4f6b30', 0.8);
+      g.fillStyle = '#20160a'; g.beginPath(); g.ellipse(x + 3, y - 3.5, 2.2, 2.6, 0, 0, Math.PI * 2); g.fill();
+      if (paille) { g.strokeStyle = '#d8bd78'; g.lineWidth = 0.8; g.beginPath(); g.moveTo(x - 5, y + 2); g.lineTo(x - 8, y + 7); g.moveTo(x + 2, y + 3); g.lineTo(x + 3, y + 8); g.stroke(); }
+    } else if (sp === 'tourterelle') {
+      // plateforme plate de quelques brindilles
+      g.fillStyle = 'rgba(110,80,46,0.85)'; g.beginPath(); g.ellipse(x, y + 0.5, 10, 2.6, 0, 0, Math.PI * 2); g.fill();
+      brindilles(x, y + 0.5, 10, 2.4, 18, '#a07a4a', 1);
+    } else {
+      // coupe : mousse pour le rouge-gorge, boue et œufs bleus pour le merle
+      var merle = sp === 'merle';
+      g.fillStyle = merle ? '#5a3e26' : '#6f8a46'; g.strokeStyle = '#22180c'; g.lineWidth = 1.3;
+      g.beginPath(); g.ellipse(x, y, 8.5, 4.2, 0, 0, Math.PI); g.lineTo(x - 8.5, y - 0.5); g.closePath(); g.fill(); g.stroke();
+      brindilles(x, y + 1, 8, 3, 12, merle ? '#8a6238' : '#9cba6a', 0.9);
+      g.fillStyle = merle ? '#3a2614' : '#4a6030'; g.beginPath(); g.ellipse(x, y - 0.2, 6, 1.7, 0, 0, Math.PI * 2); g.fill();
+      if (merle) { g.fillStyle = '#8cc8d8'; g.strokeStyle = '#22180c'; g.lineWidth = 0.6; [[-2, -1], [1.5, -1.3]].forEach(function (o) { g.beginPath(); g.ellipse(x + o[0], y + o[1], 1.6, 1.2, 0, 0, Math.PI * 2); g.fill(); g.stroke(); }); }
+    }
+    g.restore();
   }
   function libreAuSol(x, y) {
     var cx = Math.floor(x / C), cy = Math.floor(y / C), t = terrain(cx, cy), i = (y - cy * C) * C + (x - cx * C);
-    return !t.arbre[i] && !t.rocher[i] && !(souches.size && souches.has(x + ',' + y));
+    return !t.arbre[i] && !t.rocher[i] && !t.eau[i] && !(souches.size && souches.has(x + ',' + y));
   }
   function nouvelOiseau(gx, gy) {
     var n = nidMonde(gx, gy);
@@ -3503,7 +3631,9 @@
       o.sx += (o.dir - o.sx) * Math.min(1, dt * 7);
       var dj = Math.sqrt((o.wx - joueur.x) * (o.wx - joueur.x) + (o.wy - joueur.y) * (o.wy - joueur.y));
       if (o.etat !== 'fuite' && !arbreEn(o.gx, o.gy)) fuir(o);
+      if (o.etat === 'sol' && abri()) { o.brindille = false; var nmA = nidMonde(o.gx, o.gy); voler(o, nmA.wx, nmA.wy, nmA.z); }
       if (o.etat === 'perche') {
+        if (abri()) { o.t = 0; continue; }
         o.teteT -= dt;
         if (o.teteT <= 0) { o.teteT = 0.6 + Math.random() * 2.2; if (Math.random() < 0.35) o.dir = -o.dir; else o.tete = Math.random() < 0.5 ? 0 : (Math.random() < 0.5 ? -1 : 1); }
         if (o.t > o.attente) {
@@ -3627,6 +3757,7 @@
     g.restore();
   }
   function dessinerUnOiseau(o) {
+    if (o.etat === 'perche' && abri()) return;     // blotti dans le nid
     var gxo = Math.floor(o.wx), gyo = Math.floor(o.wy), P = ecran(o.wx, o.wy), k = TW / 100;
     var hs = o.etat === 'perche' || (o.etat === 'vol' && !o.sol && o.t / o.duree > 0.5) ? hauteur(o.gx, o.gy) : hauteur(gxo, gyo);
     var x = P.x, y = P.y - hs * TH - o.z * TW, vol = o.etat === 'vol' || o.etat === 'fuite';
@@ -3640,6 +3771,354 @@
     if (vol) ctx.rotate(-0.12);
     dessinerOiseau(ctx, o.sp, o, vol);
     ctx.restore();
+  }
+
+
+  // ================= Animaux : lapins, renards, cerfs, hérons, poissons =================
+  var animaux = [], animT = 1;
+  function solLibre(x, y) { return libreAuSol(Math.floor(x), Math.floor(y)); }
+  function presDeLEau(x, y) { for (var j = -1; j <= 1; j++) for (var i = -1; i <= 1; i++) if (eauEn(x + i, y + j)) return true; return false; }
+  function compter(type) { return animaux.filter(function (a) { return a.type === type; }).length; }
+  function nouvelAnimal(type, x, y) {
+    var a = { type: type, wx: x, wy: y, z: 0, dir: Math.random() < 0.5 ? -1 : 1, sx: 1, etat: 'pause', t: 0, attente: 1 + Math.random() * 3, ph: Math.random() * 6, vx: 0, vy: 0, tete: 0 };
+    if (type === 'poisson') { a.etat = 'nage'; a.coul = Math.random() < 0.5 ? '#e08a4a' : '#8a9aa6'; a.taille = 0.8 + Math.random() * 0.4; }
+    animaux.push(a);
+    return a;
+  }
+  function placeAuHasard(test) {
+    for (var e = 0; e < 40; e++) {
+      var ang = Math.random() * 6.28, d = 7 + Math.random() * 8;
+      var x = Math.floor(camera.x + Math.cos(ang) * d), y = Math.floor(camera.y + Math.sin(ang) * d);
+      if (Math.abs(x + 0.5 - joueur.x) + Math.abs(y + 0.5 - joueur.y) < 6) continue;
+      if (test(x, y)) return { x: x + 0.2 + Math.random() * 0.6, y: y + 0.2 + Math.random() * 0.6 };
+    }
+    return null;
+  }
+  function apparitions() {
+    var pos, n;
+    if (!abri()) {
+      if (compter('lapin') < 4 && Math.random() < 0.5 && (pos = placeAuHasard(function (x, y) { return libreAuSol(x, y); }))) {
+        for (n = 0; n < 1 + Math.floor(Math.random() * 3); n++) nouvelAnimal('lapin', pos.x + (Math.random() - 0.5) * 0.8, pos.y + (Math.random() - 0.5) * 0.8);
+      }
+      if (compter('renard') < 1 && Math.random() < 0.15 && (pos = placeAuHasard(function (x, y) { return libreAuSol(x, y); }))) nouvelAnimal('renard', pos.x, pos.y);
+      if (compter('cerf') < 1 && Math.random() < 0.08 && (pos = placeAuHasard(function (x, y) { return libreAuSol(x, y) && foretEn(x, y) > 0.5; }))) nouvelAnimal('cerf', pos.x, pos.y);
+      if (compter('heron') < 2 && Math.random() < 0.3 && (pos = placeAuHasard(function (x, y) { return libreAuSol(x, y) && presDeLEau(x, y); }))) nouvelAnimal('heron', pos.x, pos.y);
+    }
+    if (compter('poisson') < 7 && (pos = placeAuHasard(function (x, y) { return eauEn(x, y); }))) nouvelAnimal('poisson', pos.x, pos.y);
+  }
+  function viser(a, x, y, vit) {
+    var dx = x - a.wx, dy = y - a.wy, d = Math.sqrt(dx * dx + dy * dy) || 1;
+    a.vx = dx / d * vit; a.vy = dy / d * vit;
+    var sxv = dx - dy; if (Math.abs(sxv) > 0.02) a.dir = sxv > 0 ? 1 : -1;
+  }
+  function fuirAnimal(a, vit) {
+    var dx = a.wx - joueur.x, dy = a.wy - joueur.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
+    a.etat = 'fuite'; a.t = 0;
+    viser(a, a.wx + dx / d * 10, a.wy + dy / d * 10, vit);
+  }
+  function avancer(a, dt, terre) {
+    var nx = a.wx + a.vx * dt, ny = a.wy + a.vy * dt;
+    if (terre ? solLibre(nx, ny) : eauEn(Math.floor(nx), Math.floor(ny))) { a.wx = nx; a.wy = ny; return true; }
+    a.vx = -a.vx * 0.5; a.vy = -a.vy * 0.5; a.dir = -a.dir;
+    return false;
+  }
+  function majAnimaux(dt) {
+    animT -= dt;
+    if (animT <= 0) { animT = 1.5; apparitions(); }
+    for (var n = animaux.length - 1; n >= 0; n--) {
+      var a = animaux[n];
+      a.t += dt; a.ph += dt;
+      a.sx += (a.dir - a.sx) * Math.min(1, dt * 8);
+      var dj = Math.sqrt((a.wx - joueur.x) * (a.wx - joueur.x) + (a.wy - joueur.y) * (a.wy - joueur.y));
+      if (a.type !== 'poisson' && a.etat !== 'fuite' && abri()) fuirAnimal(a, a.type === 'lapin' ? 2.6 : 2.2);
+      if (a.type === 'lapin') {
+        if (a.etat !== 'fuite' && dj < 2.6) fuirAnimal(a, 3.2);
+        if (a.etat === 'pause') {
+          if (a.t > a.attente) { a.etat = 'saut'; a.t = 0; a.sauts = 1 + Math.floor(Math.random() * 4); var ang = Math.random() * 6.28; viser(a, a.wx + Math.cos(ang), a.wy + Math.sin(ang), 1.4); }
+        } else {
+          var per = a.etat === 'fuite' ? 0.28 : 0.36, u = (a.t % per) / per;
+          a.z = Math.sin(u * Math.PI) * (a.etat === 'fuite' ? 0.14 : 0.10);
+          avancer(a, dt, true);
+          if (a.etat === 'saut' && a.t > a.sauts * per) { a.etat = 'pause'; a.t = 0; a.z = 0; a.attente = 0.8 + Math.random() * 3; }
+        }
+      } else if (a.type === 'renard') {
+        if (a.etat !== 'fuite' && dj < 3.2) fuirAnimal(a, 3.6);
+        if (a.etat === 'pause') {
+          if (a.t > a.attente) { a.etat = 'marche'; a.t = 0; var ang2 = Math.random() * 6.28; viser(a, a.wx + Math.cos(ang2) * 3, a.wy + Math.sin(ang2) * 3, 1.0); a.duree = 2 + Math.random() * 3; }
+        } else {
+          avancer(a, dt, true);
+          if (a.etat === 'marche' && a.t > a.duree) { a.etat = 'pause'; a.t = 0; a.attente = 1.5 + Math.random() * 4; }
+        }
+      } else if (a.type === 'cerf') {
+        a.alerte = dj < 5.5 ? Math.min(1, (a.alerte || 0) + dt * 3) : Math.max(0, (a.alerte || 0) - dt);
+        if (a.etat !== 'fuite' && dj < 3.6) fuirAnimal(a, 3.8);
+        if (a.etat === 'pause') {
+          if (a.t > a.attente && a.alerte < 0.5) { a.etat = 'marche'; a.t = 0; var ang3 = Math.random() * 6.28; viser(a, a.wx + Math.cos(ang3) * 2, a.wy + Math.sin(ang3) * 2, 0.55); a.duree = 2 + Math.random() * 3; }
+        } else {
+          if (a.etat === 'fuite') { var uc = (a.t % 0.55) / 0.55; a.z = Math.sin(uc * Math.PI) * 0.22; }
+          avancer(a, dt, true);
+          if (a.etat === 'marche' && a.t > a.duree) { a.etat = 'pause'; a.t = 0; a.attente = 3 + Math.random() * 6; }
+        }
+      } else if (a.type === 'heron') {
+        if (a.etat !== 'fuite' && dj < 3.6) { fuirAnimal(a, 2.4); a.envol = true; }
+        if (a.etat === 'fuite') { a.z += dt * (0.5 + a.t * 0.4); a.wx += a.vx * dt; a.wy += a.vy * dt; }
+        else if (a.etat === 'pause') {
+          if (a.t > a.attente) {
+            if (Math.random() < 0.45) { a.etat = 'pique'; a.t = 0; }
+            else { a.etat = 'marche'; a.t = 0; var ang4 = Math.random() * 6.28; viser(a, a.wx + Math.cos(ang4) * 0.8, a.wy + Math.sin(ang4) * 0.8, 0.25); a.duree = 2 + Math.random() * 2; }
+          }
+        } else if (a.etat === 'pique') {
+          if (a.t > 0.25 && !a.plouf) { a.plouf = true; ronds.push({ x: a.wx + a.dir * 0.25, y: a.wy - a.dir * 0.25, t: 0 }); }
+          if (a.t > 1.1) { a.etat = 'pause'; a.t = 0; a.plouf = false; a.attente = 2 + Math.random() * 5; }
+        } else {
+          var ok = avancer(a, dt, true);
+          if (!presDeLEau(Math.floor(a.wx), Math.floor(a.wy))) { a.vx = -a.vx; a.vy = -a.vy; a.dir = -a.dir; }
+          if (a.t > a.duree || !ok) { a.etat = 'pause'; a.t = 0; a.attente = 2 + Math.random() * 4; }
+        }
+      } else {
+        // Poisson : nage d'un point à l'autre de l'eau, saute parfois
+        if (a.etat === 'nage') {
+          if (!a.cible || a.t > 3) { var ang5 = Math.random() * 6.28; a.cible = { x: a.wx + Math.cos(ang5) * 1.2, y: a.wy + Math.sin(ang5) * 1.2 }; a.t = 0; }
+          viser(a, a.cible.x, a.cible.y, 0.5);
+          if (!avancer(a, dt, false)) a.cible = null;
+          if (Math.random() < dt / 9) { a.etat = 'saut'; a.t = 0; a.x0 = a.wx; a.y0 = a.wy; ronds.push({ x: a.wx, y: a.wy, t: 0 }); }
+        } else {
+          var us = a.t / 0.7;
+          a.z = Math.sin(Math.min(1, us) * Math.PI) * 0.35;
+          a.wx += a.vx * dt * 1.5; a.wy += a.vy * dt * 1.5;
+          if (us >= 1) { a.etat = 'nage'; a.z = 0; ronds.push({ x: a.wx, y: a.wy, t: 0 }); if (!eauEn(Math.floor(a.wx), Math.floor(a.wy))) { a.wx = a.x0; a.wy = a.y0; } }
+        }
+      }
+      if ((a.etat === 'fuite' && a.t > 5) || Math.abs(a.wx - camera.x) + Math.abs(a.wy - camera.y) > 28) animaux.splice(n, 1);
+    }
+    for (n = ronds.length - 1; n >= 0; n--) { ronds[n].t += dt; if (ronds[n].t > 1.2) ronds.splice(n, 1); }
+  }
+  var ronds = [];
+
+  // ---------- Dessins (unités du sprite : k = TW / 100, pattes au point (0, 0), tourné vers +x) ----------
+  var TRAIT_A = '#33241a';
+  function ombreSol(x, y, rx, ry, a) { ctx.fillStyle = 'rgba(30,24,40,' + a + ')'; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fill(); }
+  function dessinerLapin(a) {
+    var g = ctx, bond = a.z > 0.01, ph = a.ph;
+    g.lineWidth = 1; g.strokeStyle = TRAIT_A; g.lineJoin = 'round';
+    // queue
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(-8, -6, 2.4, 0, Math.PI * 2); g.fill(); g.stroke();
+    // patte arrière
+    g.fillStyle = '#9c8268'; g.beginPath(); g.ellipse(-4, bond ? -2.5 : -2, bond ? 5 : 4, 2.2, bond ? 0.4 : 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    // corps
+    g.fillStyle = '#b39a7d'; g.beginPath(); g.ellipse(-1, -7, bond ? 8.5 : 7, 5.4, bond ? -0.15 : -0.05, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = '#e9dcc8'; g.beginPath(); g.ellipse(2, -5, 4, 2.6, -0.2, 0, Math.PI * 2); g.fill();
+    // patte avant
+    g.fillStyle = '#a38a6e'; g.beginPath(); g.ellipse(4, -1.6, 1.6, 2.2, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    // tête
+    var mange = !bond && a.etat === 'pause' ? Math.max(0, Math.sin(ph * 2.2)) * 1.5 : 0;
+    g.save(); g.translate(6.5, -11 + mange);
+    var oreille = Math.sin(ph * 5) * 0.12 * (Math.sin(ph * 0.7) > 0.6 ? 1 : 0);
+    [[-1.2, -0.25], [1.2, -0.05]].forEach(function (o, i) {
+      g.save(); g.translate(o[0], -2.5); g.rotate(-0.25 + o[1] + (i ? oreille : -oreille) - (bond ? 0.5 : 0));
+      g.fillStyle = '#b39a7d'; g.beginPath(); g.ellipse(0, -5, 1.7, 5.2, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+      g.fillStyle = '#e8b4ac'; g.beginPath(); g.ellipse(0, -5, 0.8, 3.8, 0, 0, Math.PI * 2); g.fill();
+      g.restore();
+    });
+    g.fillStyle = '#b39a7d'; g.beginPath(); g.ellipse(0, 0, 4, 3.4, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = '#1a1210'; g.beginPath(); g.arc(1.4, -0.8, 0.9, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(1.7, -1.1, 0.3, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#e88a8a'; g.beginPath(); g.arc(3.8, 0.4, 0.7, 0, Math.PI * 2); g.fill();
+    g.restore();
+  }
+  function patte(g, x, y, ang, L, coulH, coulB) {
+    g.save(); g.translate(x, y); g.rotate(ang);
+    g.strokeStyle = TRAIT_A; g.lineWidth = 3.4; g.beginPath(); g.moveTo(0, 0); g.lineTo(0, L); g.stroke();
+    g.strokeStyle = coulH; g.lineWidth = 2; g.beginPath(); g.moveTo(0, 0); g.lineTo(0, L * 0.55); g.stroke();
+    g.strokeStyle = coulB; g.beginPath(); g.moveTo(0, L * 0.55); g.lineTo(0, L); g.stroke();
+    g.restore();
+  }
+  function dessinerRenard(a) {
+    var g = ctx, court = a.etat !== 'pause', vit = a.etat === 'fuite' ? 16 : 9, ph = a.ph * vit;
+    var am = court ? 0.45 : 0, sn = Math.sin(ph);
+    g.lineJoin = 'round'; g.lineCap = 'round';
+    // pattes du fond
+    patte(g, -9, -11, -sn * am, 11, '#c9632a', '#2a1a14'); patte(g, 9, -11, sn * am, 11, '#c9632a', '#2a1a14');
+    // queue en panache
+    var qv = Math.sin(a.ph * 3) * 0.1;
+    g.save(); g.translate(-13, -15); g.rotate(-0.4 + qv + (court ? 0.3 : 0));
+    g.fillStyle = '#e07a2e'; g.strokeStyle = TRAIT_A; g.lineWidth = 1.1;
+    g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(-10, -6, -20, 2); g.quadraticCurveTo(-12, 8, 0, 4); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle = '#fff6ea'; g.beginPath(); g.moveTo(-15, -1); g.quadraticCurveTo(-19, 1, -20, 2); g.quadraticCurveTo(-17, 5, -14, 4); g.closePath(); g.fill();
+    g.restore();
+    // corps
+    g.fillStyle = '#e07a2e'; g.strokeStyle = TRAIT_A; g.lineWidth = 1.1;
+    g.beginPath(); g.ellipse(0, -16, 15, 6.5, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = '#fff6ea'; g.beginPath(); g.ellipse(6, -12.5, 7, 2.8, -0.1, 0, Math.PI * 2); g.fill();
+    // pattes avant
+    patte(g, -6, -11, sn * am, 11, '#d26c2c', '#2a1a14'); patte(g, 11, -11, -sn * am, 11, '#d26c2c', '#2a1a14');
+    // tête
+    var renifle = a.etat === 'pause' ? Math.sin(a.ph * 1.3) * 2 + 2 : 0;
+    g.save(); g.translate(15, -21 + renifle);
+    g.fillStyle = '#e07a2e';
+    [[-2, -1], [2, 0.3]].forEach(function (o) { g.beginPath(); g.moveTo(o[0] - 2.5, -3); g.lineTo(o[0] - 0.5, -10); g.lineTo(o[0] + 2, -3); g.closePath(); g.fill(); g.stroke(); });
+    g.fillStyle = '#2a1a14'; g.beginPath(); g.moveTo(-1.5, -4); g.lineTo(-0.6, -8.5); g.lineTo(0.8, -4); g.closePath(); g.fill();
+    g.fillStyle = '#e07a2e'; g.beginPath(); g.ellipse(0, 0, 5.5, 4.6, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.beginPath(); g.moveTo(3, -2); g.lineTo(11, 1.2); g.lineTo(3, 3.5); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle = '#fff6ea'; g.beginPath(); g.moveTo(1, 1.5); g.lineTo(10, 1.6); g.lineTo(3, 3.6); g.closePath(); g.fill();
+    g.fillStyle = '#1a1210'; g.beginPath(); g.arc(11, 1.1, 1.1, 0, Math.PI * 2); g.fill();
+    g.beginPath(); g.ellipse(2.2, -1.2, 0.8, 1.1, 0.3, 0, Math.PI * 2); g.fill();
+    g.restore();
+  }
+  function dessinerCerf(a) {
+    var g = ctx, marche = a.etat !== 'pause', vit = a.etat === 'fuite' ? 11 : 5, ph = a.ph * vit, sn = Math.sin(ph);
+    var am = a.etat === 'fuite' ? 0.6 : marche ? 0.3 : 0;
+    var broute = a.etat === 'pause' && (a.alerte || 0) < 0.3 ? 1 : 0;
+    g.lineJoin = 'round'; g.lineCap = 'round';
+    patte(g, -12, -24, -sn * am, 24, '#8a5c38', '#4a3020'); patte(g, 13, -24, sn * am, 24, '#8a5c38', '#4a3020');
+    // corps
+    g.fillStyle = '#9a6a42'; g.strokeStyle = TRAIT_A; g.lineWidth = 1.2;
+    g.beginPath(); g.ellipse(0, -30, 19, 9, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = '#e9d6b8'; g.beginPath(); g.ellipse(3, -24, 12, 3, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#fffaf0'; g.beginPath(); g.ellipse(-18, -33, 3.5, 4.5, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = 'rgba(255,245,225,0.75)'; [[-6, -34], [0, -36], [6, -33], [-3, -31]].forEach(function (q) { g.beginPath(); g.arc(q[0], q[1], 1.1, 0, Math.PI * 2); g.fill(); });
+    patte(g, -9, -24, sn * am, 24, '#9a6a42', '#4a3020'); patte(g, 16, -24, -sn * am, 24, '#9a6a42', '#4a3020');
+    // cou et tête (baissée pour brouter)
+    var hx = broute ? 30 : 25, hy = broute ? -14 + Math.sin(a.ph * 2) * 1 : -52 + (a.alerte || 0) * -3;
+    g.fillStyle = '#9a6a42';
+    g.beginPath(); g.moveTo(13, -36); g.quadraticCurveTo((13 + hx) / 2 + 3, (hy - 36) / 2 - 2, hx - 3, hy); g.lineTo(hx + 2, hy + 5); g.quadraticCurveTo((13 + hx) / 2 + 6, (hy - 30) / 2 + 4, 17, -28); g.closePath(); g.fill(); g.stroke();
+    g.save(); g.translate(hx, hy);
+    // bois
+    if (!broute || true) {
+      g.strokeStyle = '#6a4a2a'; g.lineWidth = 2;
+      [[-1, -1], [1, 1]].forEach(function (o) {
+        g.beginPath(); g.moveTo(o[0] * 1.5, -4); g.lineTo(o[0] * 4 - 3, -14); g.lineTo(o[0] * 5 - 7, -21);
+        g.moveTo(o[0] * 4 - 3, -14); g.lineTo(o[0] * 4 + 2, -18); g.moveTo(o[0] * 2.5 - 1, -9); g.lineTo(o[0] * 2.5 - 6, -11); g.stroke();
+      });
+    }
+    g.strokeStyle = TRAIT_A; g.lineWidth = 1.2; g.fillStyle = '#9a6a42';
+    g.beginPath(); g.ellipse(-2, -6, 2, 4, -0.6, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.beginPath(); g.ellipse(0, 0, 6, 4.5, 0.25, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.beginPath(); g.ellipse(6, 2.2, 4, 2.6, 0.3, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = '#1a1210'; g.beginPath(); g.arc(9, 3, 1.1, 0, Math.PI * 2); g.fill();
+    g.beginPath(); g.arc(1.5, -1, 1, 0, Math.PI * 2); g.fill();
+    g.restore();
+  }
+  function dessinerHeron(a) {
+    var g = ctx, vol = a.etat === 'fuite';
+    g.lineJoin = 'round'; g.lineCap = 'round'; g.strokeStyle = TRAIT_A; g.lineWidth = 1.1;
+    if (vol) {
+      var bat = Math.sin(a.ph * 7);
+      g.strokeStyle = '#d9b34a'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(-10, -20); g.lineTo(-24, -18); g.stroke();
+      g.strokeStyle = TRAIT_A; g.lineWidth = 1.1;
+      g.fillStyle = '#7f90a2'; g.beginPath(); g.moveTo(-4, -24); g.quadraticCurveTo(-12, -40 - bat * 14, -26, -36 - bat * 22); g.quadraticCurveTo(-14, -26, -2, -20); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = '#a9b8c6'; g.beginPath(); g.ellipse(0, -22, 12, 5, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+      g.beginPath(); g.ellipse(13, -23, 4, 3, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+      g.fillStyle = '#e8b830'; g.beginPath(); g.moveTo(16, -24); g.lineTo(25, -22); g.lineTo(16, -21.5); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = '#7f90a2'; g.beginPath(); g.moveTo(-2, -24); g.quadraticCurveTo(-6, -42 - bat * 16, -14, -50 - bat * 24); g.quadraticCurveTo(-4, -30, 4, -21); g.closePath(); g.fill(); g.stroke();
+      return;
+    }
+    var pique = a.etat === 'pique' ? Math.sin(Math.min(1, a.t / 0.5) * Math.PI) : 0;
+    var marche = a.etat === 'marche', sn = Math.sin(a.ph * 4) * (marche ? 0.25 : 0);
+    // pattes fines
+    g.strokeStyle = '#c9a23a'; g.lineWidth = 1.4;
+    g.beginPath(); g.moveTo(-1, -26); g.lineTo(-2 + sn * 10, 0); g.moveTo(2, -26); g.lineTo(3 - sn * 10, 0); g.stroke();
+    g.strokeStyle = TRAIT_A; g.lineWidth = 1.1;
+    // corps
+    g.fillStyle = '#9fb0c0'; g.beginPath(); g.ellipse(0, -32, 10, 7, -0.35, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = '#7f90a2'; g.beginPath(); g.ellipse(-3, -32, 8, 4.5, -0.35, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#5d6c7c'; g.beginPath(); g.moveTo(-8, -28); g.lineTo(-14, -24); g.lineTo(-7, -26); g.closePath(); g.fill();
+    // cou en S, se détend pour piquer
+    var tx = 10 + pique * 14, ty = -58 + pique * 50;
+    g.strokeStyle = TRAIT_A; g.lineWidth = 5.2;
+    g.beginPath(); g.moveTo(6, -36); g.bezierCurveTo(14, -42 + pique * 10, 2, -50 + pique * 30, tx, ty); g.stroke();
+    g.strokeStyle = '#eef2f4'; g.lineWidth = 3.4; g.stroke();
+    g.save(); g.translate(tx, ty); g.rotate(pique * 1.1);
+    g.fillStyle = '#eef2f4'; g.strokeStyle = TRAIT_A; g.lineWidth = 1.1;
+    g.beginPath(); g.ellipse(0, 0, 4, 3.2, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.strokeStyle = '#1e2228'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(-1, -1.5); g.quadraticCurveTo(-6, -3, -10, -1); g.stroke();
+    g.fillStyle = '#e8b830'; g.strokeStyle = TRAIT_A; g.lineWidth = 0.9;
+    g.beginPath(); g.moveTo(3, -1); g.lineTo(14, 0.6); g.lineTo(3, 1.5); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle = '#1a1210'; g.beginPath(); g.arc(1.2, -0.6, 0.8, 0, Math.PI * 2); g.fill();
+    g.restore();
+  }
+  function dessinerPoisson(a) {
+    var g = ctx, saut = a.etat === 'saut', on = Math.sin(a.ph * 9) * 0.25;
+    g.save();
+    if (!saut) g.globalAlpha = 0.5;
+    g.rotate(saut ? -Math.cos(Math.min(1, a.t / 0.7) * Math.PI) * 0.7 : 0);
+    var t = a.taille;
+    g.scale(t, saut ? t : t * 0.6);
+    g.fillStyle = saut ? a.coul : '#1d4a6a';
+    g.strokeStyle = saut ? TRAIT_A : 'transparent'; g.lineWidth = 0.9;
+    g.beginPath(); g.ellipse(0, 0, 8, 3.2, 0, 0, Math.PI * 2); g.fill(); if (saut) g.stroke();
+    g.beginPath(); g.moveTo(-7, 0); g.lineTo(-12, -3.5 + on * 4); g.lineTo(-12, 3.5 + on * 4); g.closePath(); g.fill(); if (saut) g.stroke();
+    if (saut) {
+      g.fillStyle = 'rgba(255,255,255,0.5)'; g.beginPath(); g.ellipse(1, -1.2, 4, 0.8, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#1a1210'; g.beginPath(); g.arc(5, -0.6, 0.7, 0, Math.PI * 2); g.fill();
+    }
+    g.restore();
+  }
+  function dessinerUnAnimal(a) {
+    var k = TW / 100, gx = Math.floor(a.wx), gy = Math.floor(a.wy), P = ecran(a.wx, a.wy), h = hauteur(gx, gy);
+    var x = P.x, y = P.y - h * TH;
+    var taille = { lapin: 0.95, renard: 0.95, cerf: 1.0, heron: 0.9, poisson: 0.85 }[a.type];
+    if (a.type === 'poisson') {
+      if (a.etat === 'saut') ombreSol(x, y, 6 * k, 2 * k, 0.18);
+    } else if (!(a.type === 'heron' && a.etat === 'fuite')) {
+      var rs = { lapin: 8, renard: 15, cerf: 22, heron: 10 }[a.type];
+      ombreSol(x, y, rs * k, rs * 0.38 * k, 0.24 * Math.max(0.3, 1 - a.z * 2));
+    }
+    ctx.save();
+    ctx.translate(x, y - a.z * TW);
+    var sx = Math.abs(a.sx) < 0.3 ? (a.sx < 0 ? -0.3 : 0.3) : a.sx;
+    if (a.type === 'heron' && a.etat === 'fuite') ctx.globalAlpha = Math.max(0, Math.min(1, 5 - a.t));
+    ctx.scale(sx * k * taille, k * taille);
+    if (a.type === 'lapin') dessinerLapin(a);
+    else if (a.type === 'renard') dessinerRenard(a);
+    else if (a.type === 'cerf') dessinerCerf(a);
+    else if (a.type === 'heron') dessinerHeron(a);
+    else dessinerPoisson(a);
+    ctx.restore();
+  }
+  // Petits reflets qui bougent sur l'eau, et ronds quand un poisson saute
+  function dessinerEauVivante(gx, gy, tps) {
+    var P = ecran(gx, gy), h = hauteur(gx, gy), ay = P.y - h * TH, k = TW / 100;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(235,248,255,0.55)'; ctx.lineWidth = Math.max(1, TW * 0.012); ctx.lineCap = 'round';
+    for (var n = 0; n < 2; n++) {
+      var ph = (tps * 0.35 + hasard2(gx * 3 + n, gy * 7 - n)) % 1, u = 0.2 + hasard2(gx + n * 5, gy) * 0.6, v = (0.15 + ph * 0.7);
+      var px = P.x + (u - v) * TW / 2, py = ay + (u + v) * TH / 2, L = TW * 0.05 * Math.sin(ph * Math.PI);
+      ctx.globalAlpha = Math.sin(ph * Math.PI);
+      ctx.beginPath(); ctx.moveTo(px - L, py); ctx.lineTo(px + L, py); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  // Surface de l'eau devant les jambes du perso, avec un petit remous
+  function dessinerEauAutourJoueur() {
+    var e = joueur.dansEau || 0;
+    if (e < 0.03) return;
+    var p = ecran(joueur.x, joueur.y), U = TW * 0.707, t = joueur.temps;
+    var surf = p.y - joueur.h * TH;                       // niveau de l'eau
+    var pieds = surf + e * U * 0.30;
+    var w = TW * 0.30;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, e * 1.4);
+    ctx.fillStyle = '#3784b8';
+    var wb = TW * 0.21;
+    ctx.beginPath();
+    ctx.moveTo(p.x - wb, surf); ctx.lineTo(p.x + wb, surf); ctx.lineTo(p.x + wb, pieds + U * 0.06); ctx.lineTo(p.x - wb, pieds + U * 0.06);
+    ctx.closePath(); ctx.fill();
+    // ondulation de la surface autour du corps
+    ctx.strokeStyle = 'rgba(235,248,255,0.85)'; ctx.lineWidth = Math.max(1.2, TW * 0.016);
+    var ond = Math.sin(t * 6) * 0.08;
+    ctx.beginPath(); ctx.ellipse(p.x, surf, w * (0.95 + ond), w * 0.40 * (0.95 + ond), 0, 0.15, Math.PI - 0.15); ctx.stroke();
+    ctx.strokeStyle = 'rgba(235,248,255,0.45)';
+    ctx.beginPath(); ctx.ellipse(p.x, surf, w * (1.3 - ond), w * 0.55 * (1.3 - ond), 0, 0.3, Math.PI - 0.3); ctx.stroke();
+    ctx.restore();
+  }
+  function dessinerRonds() {
+    ronds.forEach(function (r) {
+      var gx = Math.floor(r.x), gy = Math.floor(r.y), P = ecran(r.x, r.y), y = P.y - hauteur(gx, gy) * TH;
+      ctx.save(); ctx.globalAlpha = Math.max(0, 1 - r.t / 1.2); ctx.strokeStyle = 'rgba(235,248,255,0.85)'; ctx.lineWidth = Math.max(1, TW * 0.012);
+      for (var n = 0; n < 2; n++) { var rr = TW * (0.04 + (r.t + n * 0.25) * 0.12); ctx.beginPath(); ctx.ellipse(P.x, y, rr, rr * 0.5, 0, 0, Math.PI * 2); ctx.stroke(); }
+      ctx.restore();
+    });
   }
 
   // ---------- Papillons : se posent sur les fleurs, s'envolent quand on approche ----------
@@ -3660,7 +4139,7 @@
     papTimer -= dt;
     if (papTimer <= 0) {
       papTimer = 1.2;
-      if (papillons.length < 3 && Math.random() < 0.4) {
+      if (papillons.length < 3 && Math.random() < 0.4 && !abri()) {
         for (var essai = 0; essai < 30; essai++) {
           var gx = Math.floor(camera.x + (Math.random() - 0.5) * 18), gy = Math.floor(camera.y + (Math.random() - 0.5) * 18);
           if (Math.abs(gx + 0.5 - joueur.x) + Math.abs(gy + 0.5 - joueur.y) < 3 || !fleurEn(gx, gy)) continue;
@@ -3675,6 +4154,7 @@
       var p = papillons[n];
       p.t += dt;
       var dj = Math.sqrt((p.wx - joueur.x) * (p.wx - joueur.x) + (p.wy - joueur.y) * (p.wy - joueur.y));
+      if (abri() && p.etat !== 'depart') { p.etat = 'depart'; p.ang = Math.random() * 6.28; }
       if (p.etat === 'pose') {
         if (dj < 1.4 || vent.force > 0.7) { p.etat = 'vol'; p.vol = 2.5 + Math.random() * 3; p.haut = 0.9 + Math.random() * 0.7; p.ang = Math.atan2(p.wy - joueur.y, p.wx - joueur.x) + (Math.random() - 0.5); }
       } else if (p.etat === 'vol') {
@@ -3737,6 +4217,7 @@
   var volees = [], voleeT = 8 + Math.random() * 10;
   function majVolees(dt) {
     voleeT -= dt;
+    if (voleeT <= 0 && abri()) voleeT = 5;
     if (voleeT <= 0) {
       voleeT = 18 + Math.random() * 30;
       var ang = Math.random() * Math.PI * 2, nb = 3 + Math.floor(Math.random() * 5), ois = [];
@@ -3809,6 +4290,84 @@
       });
     });
   }
+  // ---------- Pluie : de temps en temps ; les animaux vont s'abriter ----------
+  var pluie = { force: 0, cible: 0, prochain: 70 + Math.random() * 80, reste: 0, temps: 0 };
+  function abri() { return pluie.force > 0.25; }
+  function majPluie(dt) {
+    pluie.temps += dt;
+    pluie.prochain -= dt;
+    if (pluie.reste > 0) { pluie.reste -= dt; if (pluie.reste <= 0) { pluie.cible = 0; pluie.prochain = 90 + Math.random() * 120; } }
+    else if (pluie.prochain <= 0) { pluie.reste = 25 + Math.random() * 30; pluie.cible = 0.6 + Math.random() * 0.4; }
+    pluie.force += (pluie.cible - pluie.force) * Math.min(1, dt * 0.35);
+    if (pluie.force < 0.002) pluie.force = 0;
+  }
+  function hp(n) { var x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+  var gouttes = [], impacts = [];
+  // Point du monde sous un point de l'écran (approximation, sans le relief)
+  function mondeSous(sx, sy) {
+    var Pc = ecran(camera.x, camera.y), dx = sx - Pc.x, dy = sy - Pc.y;
+    return { x: camera.x + dx / TW + dy / TH, y: camera.y + dy / TH - dx / TW };
+  }
+  function majGouttes(dt) {
+    var f = pluie.force;
+    if (f > 0.02) {
+      var nb = Math.min(60, Math.round(1100 * f * dt + Math.random()));
+      for (var n = 0; n < nb; n++) {
+        var m = mondeSous(Math.random() * (W + 200) - 100, Math.random() * (H + 400) - 100);
+        gouttes.push({ wx: m.x, wy: m.y, z: 2.4 + Math.random() * 1.6, v: 7 + Math.random() * 2 });
+      }
+    }
+    var dvx = -0.6 - vent.force * 1.4, dvy = 0.6 + vent.force * 1.4;      // le vent pousse un peu les gouttes
+    for (var i = gouttes.length - 1; i >= 0; i--) {
+      var g = gouttes[i];
+      g.z -= g.v * dt; g.wx += dvx * dt * 0.2; g.wy += dvy * dt * 0.2;
+      if (g.z <= 0) {
+        var gx = Math.floor(g.wx), gy = Math.floor(g.wy);
+        impacts.push({ wx: g.wx, wy: g.wy, t: 0, eau: !!eauEn(gx, gy), a: Math.random() * 6.28 });
+        gouttes.splice(i, 1);
+      }
+    }
+    for (i = impacts.length - 1; i >= 0; i--) { impacts[i].t += dt; if (impacts[i].t > (impacts[i].eau ? 0.6 : 0.3)) impacts.splice(i, 1); }
+  }
+  function dessinerPluie() {
+    var f = pluie.force;
+    if (f > 0.01) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(40,58,86,' + (0.14 * f).toFixed(3) + ')';
+      ctx.fillRect(-10, -10, W + 20, H + 20);
+      ctx.restore();
+    }
+    if (!gouttes.length && !impacts.length) return;
+    ctx.save();
+    // impacts : petits ronds et gouttelettes qui rebondissent
+    ctx.lineCap = 'round';
+    impacts.forEach(function (q) {
+      var gx = Math.floor(q.wx), gy = Math.floor(q.wy), P = ecran(q.wx, q.wy), y = P.y - hauteur(gx, gy) * TH;
+      var u = q.t / (q.eau ? 0.6 : 0.3);
+      ctx.globalAlpha = (1 - u) * 0.85;
+      ctx.strokeStyle = q.eau ? 'rgba(225,242,255,0.9)' : 'rgba(225,238,255,0.8)'; ctx.lineWidth = 1.1 / ZV;
+      var r = (q.eau ? 2 + u * 9 : 1.5 + u * 5) / ZV;
+      ctx.beginPath(); ctx.ellipse(P.x, y, r, r * 0.45, 0, 0, Math.PI * 2); ctx.stroke();
+      if (!q.eau && u < 0.8) {
+        ctx.fillStyle = 'rgba(230,242,255,0.9)';
+        for (var n = 0; n < 2; n++) {
+          var a = q.a + n * 3.1, d = u * 5 / ZV, hz = Math.sin(u * Math.PI) * 5 / ZV;
+          ctx.beginPath(); ctx.arc(P.x + Math.cos(a) * d, y - hz + Math.sin(a) * d * 0.4, 0.9 / ZV, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    });
+    // gouttes : traits qui descendent jusqu'au point d'impact
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'rgba(215,230,255,0.6)'; ctx.lineWidth = 1.3 / ZV;
+    ctx.beginPath();
+    var L = 0.18 * TW, inc = (0.6 + vent.force * 1.4) * 0.03 * TW;
+    gouttes.forEach(function (g) {
+      var gx = Math.floor(g.wx), gy = Math.floor(g.wy), P = ecran(g.wx, g.wy), y = P.y - hauteur(gx, gy) * TH - g.z * TW;
+      ctx.moveTo(P.x + inc, y - L); ctx.lineTo(P.x, y);
+    });
+    ctx.stroke();
+    ctx.restore();
+  }
   function solA(wx, wy) { var P = ecran(wx, wy); P.y -= hauteur(Math.floor(wx), Math.floor(wy)) * TH; return P; }
   function dessinerVivants(sec) {
     var k = TW / 100, n;
@@ -3845,9 +4404,255 @@
     });
   }
 
+
+  // ================= Son : musique douce, vent, oiseaux, bruitages (tout est synthétisé) =================
+  var SON = (function () {
+    var pluieSrc, pluieGain, pluieFiltre;
+    var ac = null, maitre, busMus, busFx, busVent, reverb, bruitBuf, ventSrc, ventFiltre, ventGain, pret = false;
+    var reglages = { musique: true, bruitages: true, volMus: 0.6, volFx: 0.8 };
+    try { var sv = JSON.parse(localStorage.getItem('reglagesSon') || 'null'); if (sv) for (var k in sv) reglages[k] = sv[k]; } catch (err) {}
+    function sauver() { try { localStorage.setItem('reglagesSon', JSON.stringify(reglages)); } catch (err) {} }
+
+    function demarrer() {
+      if (ac) { if (ac.state === 'suspended') ac.resume(); return; }
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      ac = new AC();
+      maitre = ac.createGain(); maitre.gain.value = 0.9; maitre.connect(ac.destination);
+      // réverbération douce : réponse impulsionnelle de bruit qui décroît
+      reverb = ac.createConvolver();
+      var lon = ac.sampleRate * 3.2, ir = ac.createBuffer(2, lon, ac.sampleRate);
+      for (var c = 0; c < 2; c++) { var d = ir.getChannelData(c); for (var i = 0; i < lon; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / lon, 3.2); }
+      reverb.buffer = ir;
+      var retour = ac.createGain(); retour.gain.value = 0.55; reverb.connect(retour); retour.connect(maitre);
+      busMus = ac.createGain(); busMus.connect(maitre); busMus.connect(reverb);
+      busFx = ac.createGain(); busFx.connect(maitre);
+      var envoiFx = ac.createGain(); envoiFx.gain.value = 0.25; busFx.connect(envoiFx); envoiFx.connect(reverb);
+      // bruit blanc partagé
+      bruitBuf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+      var b = bruitBuf.getChannelData(0); for (i = 0; i < b.length; i++) b[i] = Math.random() * 2 - 1;
+      // vent : bruit filtré, volume selon la force du vent
+      busVent = ac.createGain(); busVent.connect(maitre);
+      ventSrc = ac.createBufferSource(); ventSrc.buffer = bruitBuf; ventSrc.loop = true;
+      ventFiltre = ac.createBiquadFilter(); ventFiltre.type = 'lowpass'; ventFiltre.frequency.value = 320; ventFiltre.Q.value = 0.4;
+      var ventDoux = ac.createBiquadFilter(); ventDoux.type = 'lowpass'; ventDoux.frequency.value = 700; ventDoux.Q.value = 0.3;
+      ventGain = ac.createGain(); ventGain.gain.value = 0;
+      ventSrc.connect(ventFiltre); ventFiltre.connect(ventDoux); ventDoux.connect(ventGain); ventGain.connect(busVent);
+      ventSrc.start();
+      // pluie : bruit doux et clair
+      pluieSrc = ac.createBufferSource(); pluieSrc.buffer = bruitBuf; pluieSrc.loop = true; pluieSrc.playbackRate.value = 0.93;
+      var pH = ac.createBiquadFilter(); pH.type = 'highpass'; pH.frequency.value = 900;
+      var pL = ac.createBiquadFilter(); pL.type = 'lowpass'; pL.frequency.value = 5200; pluieFiltre = pL;
+      pluieGain = ac.createGain(); pluieGain.gain.value = 0;
+      pluieSrc.connect(pH); pH.connect(pL); pL.connect(pluieGain); pluieGain.connect(busVent);
+      pluieSrc.start(0.3);
+      appliquer();
+      pret = true;
+      prochaineMesure = ac.currentTime + 0.3;
+    }
+    function appliquer() {
+      if (!ac) return;
+      var t = ac.currentTime;
+      busMus.gain.setTargetAtTime(reglages.musique ? 0.32 * reglages.volMus : 0, t, 0.3);
+      busFx.gain.setTargetAtTime(reglages.bruitages ? 0.9 * reglages.volFx : 0, t, 0.05);
+      busVent.gain.setTargetAtTime(reglages.bruitages ? 0.9 * reglages.volFx : 0, t, 0.2);
+    }
+
+    // ---------- Musique : nappes d'accords lentes et petites notes de piano/harpe ----------
+    var ACCORDS = [[60, 64, 67, 71], [57, 60, 64, 67], [53, 57, 60, 64], [55, 59, 62, 65], [52, 55, 59, 62], [53, 57, 60, 65]];
+    var GAMME = [60, 62, 64, 67, 69, 72, 74, 76, 79];
+    var MESURE = 4.2, prochaineMesure = 0, numMesure = 0, noteMel = 4;
+    function hz(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+    function nappe(m, t0, duree, vol) {
+      var o1 = ac.createOscillator(), o2 = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain();
+      o1.type = 'triangle'; o2.type = 'sine';
+      o1.frequency.value = hz(m - 12); o2.frequency.value = hz(m - 12) * 1.004;
+      f.type = 'lowpass'; f.frequency.value = 900; f.Q.value = 0.3;
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(vol, t0 + duree * 0.35);
+      g.gain.linearRampToValueAtTime(vol * 0.8, t0 + duree * 0.75);
+      g.gain.linearRampToValueAtTime(0, t0 + duree + 1.2);
+      o1.connect(f); o2.connect(f); f.connect(g); g.connect(busMus);
+      o1.start(t0); o2.start(t0); o1.stop(t0 + duree + 1.3); o2.stop(t0 + duree + 1.3);
+    }
+    function pincee(m, t0, vol) {
+      var o = ac.createOscillator(), o2 = ac.createOscillator(), g = ac.createGain(), f = ac.createBiquadFilter();
+      o.type = 'triangle'; o2.type = 'sine'; o.frequency.value = hz(m); o2.frequency.value = hz(m) * 2;
+      var g2 = ac.createGain(); g2.gain.value = 0.18;
+      f.type = 'lowpass'; f.frequency.setValueAtTime(3200, t0); f.frequency.exponentialRampToValueAtTime(900, t0 + 1.2);
+      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0008, t0 + 2.4);
+      o.connect(f); o2.connect(g2); g2.connect(f); f.connect(g); g.connect(busMus);
+      o.start(t0); o2.start(t0); o.stop(t0 + 2.5); o2.stop(t0 + 2.5);
+    }
+    function planifierMusique() {
+      if (!pret || !reglages.musique) { if (ac) prochaineMesure = Math.max(prochaineMesure, ac.currentTime + 0.2); return; }
+      while (prochaineMesure < ac.currentTime + 1.5) {
+        var t0 = prochaineMesure, acc = ACCORDS[(numMesure % 8 < 4 ? [0, 1, 2, 3] : [0, 4, 5, 3])[numMesure % 4]];
+        acc.forEach(function (m, i) { nappe(m, t0 + i * 0.05, MESURE, i === 0 ? 0.11 : 0.07); });
+        // quelques notes, pas toujours : la mélodie respire
+        var temps = [0, 1, 1.5, 2, 3, 3.5];
+        temps.forEach(function (b) {
+          if (Math.random() < (b % 1 ? 0.25 : 0.5)) {
+            noteMel = Math.max(0, Math.min(GAMME.length - 1, noteMel + [-2, -1, -1, 1, 1, 2, 0][Math.floor(Math.random() * 7)]));
+            pincee(GAMME[noteMel] + (Math.random() < 0.15 ? 12 : 0), t0 + b * MESURE / 4, 0.09 + Math.random() * 0.04);
+          }
+        });
+        if (numMesure % 2 === 0) pincee(acc[0] - 12, t0, 0.07);
+        prochaineMesure += MESURE; numMesure++;
+      }
+    }
+    setInterval(function () { if (ac) planifierMusique(); }, 400);
+
+    // ---------- Vent ----------
+    function majVent(force) {
+      if (!pret) return;
+      var t = ac.currentTime;
+      ventGain.gain.setTargetAtTime(Math.max(0, force - 0.05) * 0.24, t, 0.9);
+      ventFiltre.frequency.setTargetAtTime(220 + force * 200 + Math.sin(t * 0.7) * 60 * force, t, 0.9);
+    }
+
+    function majPluieSon(force) {
+      if (!pret) return;
+      var tt = ac.currentTime, fl = 0.65 + 0.25 * Math.sin(tt * 0.31) + 0.15 * Math.sin(tt * 0.83 + 1.7) + 0.12 * Math.sin(tt * 2.1);
+      if (Math.random() < 0.02) fl += 0.35;                  // petites averses plus fortes
+      pluieGain.gain.setTargetAtTime(force * 0.10 * Math.max(0.3, fl), tt, 0.6);
+      pluieFiltre.frequency.setTargetAtTime(3800 + 1800 * Math.sin(tt * 0.47) + 900 * Math.sin(tt * 1.3), tt, 0.8);
+      if (force > 0.3 && reglages.bruitages && Math.random() < 0.25) {      // quelques grosses gouttes
+        var t0 = ac.currentTime + Math.random() * 0.2, o = ac.createOscillator(), g = ac.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(1400 + Math.random() * 900, t0); o.frequency.exponentialRampToValueAtTime(500, t0 + 0.05);
+        g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.02 * force, t0 + 0.003); g.gain.exponentialRampToValueAtTime(0.0005, t0 + 0.06);
+        o.connect(g); g.connect(busFx); o.start(t0); o.stop(t0 + 0.08);
+      }
+    }
+    // ---------- Bruitages ----------
+    function bruit(t0, duree, freq, q, vol, type) {
+      var s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+      s.buffer = bruitBuf; s.playbackRate.value = 1;
+      f.type = type || 'bandpass'; f.frequency.value = freq; f.Q.value = q;
+      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + 0.004); g.gain.exponentialRampToValueAtTime(0.0006, t0 + duree);
+      s.connect(f); f.connect(g); g.connect(busFx);
+      s.start(t0, Math.random() * 1.5); s.stop(t0 + duree + 0.05);
+      return f;
+    }
+    function ton(t0, f0, f1, duree, vol, type) {
+      var o = ac.createOscillator(), g = ac.createGain();
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(f1, t0 + duree);
+      g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + 0.006); g.gain.exponentialRampToValueAtTime(0.0006, t0 + duree);
+      o.connect(g); g.connect(busFx); o.start(t0); o.stop(t0 + duree + 0.05);
+    }
+    var FX = {
+      // pierre contre pierre : clac sec + petite résonance
+      pierre: function (t0) {
+        bruit(t0, 0.07, 2600 + Math.random() * 800, 1.2, 0.55);
+        bruit(t0, 0.16, 900 + Math.random() * 200, 2.5, 0.35);
+        ton(t0, 1900 + Math.random() * 300, 1500, 0.09, 0.08, 'triangle');
+      },
+      // gros coup sur un rocher
+      rocher: function (t0) {
+        bruit(t0, 0.22, 500, 1.2, 0.7);
+        bruit(t0, 0.08, 2400, 1, 0.4);
+        ton(t0, 160, 70, 0.2, 0.25);
+      },
+      // hache dans le bois
+      bois: function (t0) {
+        bruit(t0, 0.12, 1300, 1.5, 0.5);
+        ton(t0, 320, 180, 0.12, 0.22, 'triangle');
+      },
+      // ficelle qu'on noue / tresse : frottement de fibres
+      corde: function (t0) {
+        var f = bruit(t0, 0.28, 3000, 0.9, 0.22, 'highpass');
+        f.frequency.setValueAtTime(1800, t0); f.frequency.linearRampToValueAtTime(4200, t0 + 0.25);
+        bruit(t0 + 0.05, 0.12, 900, 3, 0.10);
+      },
+      // nœud bien serré à la fin
+      serre: function (t0) {
+        ton(t0, 520, 760, 0.09, 0.06, 'triangle');
+        bruit(t0, 0.1, 2500, 2, 0.18);
+      },
+      // écorces frottées
+      frotte: function (t0) { bruit(t0, 0.22, 1400, 0.7, 0.2); },
+      // objet terminé
+      fini: function (t0) { ton(t0, 880, 1320, 0.18, 0.06, 'sine'); ton(t0 + 0.09, 1320, 1760, 0.22, 0.05, 'sine'); },
+      // pas dans l'eau : clapotis
+      eau: function (t0) { var f = bruit(t0, 0.28, 700, 0.9, 0.35, 'lowpass'); f.frequency.setValueAtTime(1300, t0); f.frequency.exponentialRampToValueAtTime(380, t0 + 0.25); bruit(t0 + 0.05, 0.12, 2400, 2, 0.08); },
+      // herbe coupée
+      herbe: function (t0) { var f = bruit(t0, 0.12, 5000, 0.8, 0.22, 'highpass'); f.frequency.linearRampToValueAtTime(7000, t0 + 0.1); },
+      // gratter l'écorce
+      gratte: function (t0) { bruit(t0, 0.09, 2200, 1.5, 0.16); }
+    };
+    function jouer(nom, delai) {
+      if (!pret || !reglages.bruitages || !FX[nom]) return;
+      FX[nom](ac.currentTime + (delai || 0));
+    }
+
+    // ---------- Oiseaux : petits chants, pas tout le temps ----------
+    function chant(espece, vol, pan) {
+      if (!pret || !reglages.bruitages) return;
+      var t0 = ac.currentTime + 0.02, p = ac.createStereoPanner ? ac.createStereoPanner() : null, g = ac.createGain();
+      g.gain.value = vol;
+      if (p) { p.pan.value = Math.max(-1, Math.min(1, pan)); g.connect(p); p.connect(busFx); } else g.connect(busFx);
+      function syl(t, f0, f1, d, v, type) {
+        var o = ac.createOscillator(), gg = ac.createGain();
+        o.type = type || 'sine';
+        o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + d);
+        gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(v, t + 0.01); gg.gain.exponentialRampToValueAtTime(0.0005, t + d);
+        o.connect(gg); gg.connect(g); o.start(t); o.stop(t + d + 0.02);
+      }
+      var n, t = t0;
+      if (espece === 'corbeau') {
+        // « croa » rauque
+        for (n = 0; n < 1 + Math.floor(Math.random() * 2); n++) {
+          var o = ac.createOscillator(), f = ac.createBiquadFilter(), gg = ac.createGain();
+          o.type = 'sawtooth'; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(300, t + 0.32);
+          f.type = 'bandpass'; f.frequency.value = 1100; f.Q.value = 2.5;
+          gg.gain.setValueAtTime(0, t); gg.gain.linearRampToValueAtTime(0.25, t + 0.03); gg.gain.exponentialRampToValueAtTime(0.0005, t + 0.34);
+          o.connect(f); f.connect(gg); gg.connect(g); o.start(t); o.stop(t + 0.36);
+          t += 0.45;
+        }
+      } else if (espece === 'tourterelle') {
+        // « hou-hou-hou » doux
+        for (n = 0; n < 3; n++) { syl(t, 560, 480, 0.32, 0.18); t += n === 0 ? 0.42 : 0.36; }
+      } else if (espece === 'pie') {
+        for (n = 0; n < 4; n++) { syl(t, 2400, 1700, 0.07, 0.10, 'square'); t += 0.09; }
+      } else {
+        // petits passereaux : trilles et sifflets montants/descendants
+        var base = espece === 'mesange' ? 4200 : espece === 'rougegorge' ? 3600 : espece === 'merle' ? 2200 : 3200;
+        var nb = 2 + Math.floor(Math.random() * 5);
+        for (n = 0; n < nb; n++) {
+          var hautN = base * (0.85 + Math.random() * 0.4), d = 0.05 + Math.random() * 0.09;
+          syl(t, hautN, hautN * (Math.random() < 0.5 ? 1.35 : 0.7), d, 0.10);
+          t += d + 0.03 + Math.random() * 0.06;
+        }
+      }
+    }
+
+    // première interaction : le navigateur autorise le son
+    ['keydown', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, demarrer, { passive: true }); });
+
+    return {
+      jouer: jouer, chant: chant, majVent: majVent, majPluie: majPluieSon,
+      reglages: reglages,
+      regler: function (cle, val) { reglages[cle] = val; sauver(); appliquer(); }
+    };
+  })();
+  // Chants d'oiseaux proches : de temps en temps seulement
+  var chantT = 3;
+  function majChants(dt) {
+    chantT -= dt;
+    if (chantT > 0) return;
+    chantT = 2.5 + Math.random() * 6;
+    var proches = oiseaux.filter(function (o) { return o.etat !== 'fuite' && Math.abs(o.wx - joueur.x) + Math.abs(o.wy - joueur.y) < 9; });
+    if (!proches.length || Math.random() < 0.3 || abri()) return;
+    var o = proches[Math.floor(Math.random() * proches.length)];
+    var d = Math.sqrt((o.wx - joueur.x) * (o.wx - joueur.x) + (o.wy - joueur.y) * (o.wy - joueur.y));
+    SON.chant(o.sp.n, Math.max(0.15, 1 - d / 8) * 0.7, ((o.wx - o.wy) - (joueur.x - joueur.y)) / 6);
+  }
+
   // ---------- Menu pause (Échap) ----------
+  var sonVentT = 0;
   var enPause = false, elPause = document.getElementById('pause');
-  function vuePause(id) { ['pauseMenu', 'pauseTouches', 'pauseFin'].forEach(function (v) { document.getElementById(v).hidden = v !== id; }); }
+  function vuePause(id) { ['pauseMenu', 'pauseTouches', 'pauseReglages', 'pauseFin'].forEach(function (v) { document.getElementById(v).hidden = v !== id; }); }
   function basculerPause(on) {
     if (elPause.dataset.fini) return;
     enPause = on;
@@ -3867,13 +4672,25 @@
     vuePause('pauseFin');
   });
   document.getElementById('pRelancer').addEventListener('click', function () { location.reload(); });
+  (function () {
+    var m = document.getElementById('rMusique'), b = document.getElementById('rBruit'), vm = document.getElementById('rVolMus'), vf = document.getElementById('rVolFx');
+    m.checked = SON.reglages.musique; b.checked = SON.reglages.bruitages; vm.value = SON.reglages.volMus; vf.value = SON.reglages.volFx;
+    vm.disabled = !m.checked; vf.disabled = !b.checked;
+    m.addEventListener('change', function () { SON.regler('musique', m.checked); vm.disabled = !m.checked; });
+    b.addEventListener('change', function () { SON.regler('bruitages', b.checked); vf.disabled = !b.checked; });
+    vm.addEventListener('input', function () { SON.regler('volMus', +vm.value); });
+    vf.addEventListener('input', function () { SON.regler('volFx', +vf.value); SON.jouer('pierre'); });
+    document.getElementById('pReglages').addEventListener('click', function () { vuePause('pauseReglages'); });
+    document.getElementById('pRetour2').addEventListener('click', function () { vuePause('pauseMenu'); });
+  })();
 
   var dernier = 0;
   function boucle(t) {
     var dt = enPause ? 0 : Math.min(0.05, (t - dernier) / 1000 || 0);
     dernier = t;
     maj(dt);
-    majVent(dt); majFeuilles(dt); majChutes(dt); majOiseaux(dt); majEtude(dt); majPapillons(dt); majArbresTombent(dt); majVolees(dt);
+    majVent(dt); majFeuilles(dt); majChutes(dt); majOiseaux(dt); majEtude(dt); majPapillons(dt); majArbresTombent(dt); majVolees(dt); majChants(dt); majPluie(dt); majGouttes(dt); majAnimaux(dt);
+    sonVentT -= dt; if (sonVentT <= 0) { sonVentT = 0.2; SON.majVent(enPause ? 0 : vent.force); SON.majPluie(enPause ? 0 : pluie.force); }
     majTerrains();
     majHud();
     majBlocs(dt);
@@ -3888,7 +4705,7 @@
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'low';
     dessinerMonde();
-    if (!file.length) { dessinerVivants(t / 1000); dessinerVolees(t / 1000); dessinerBullesEtude(t / 1000); }
+    if (!file.length) { dessinerRonds(); dessinerVivants(t / 1000); dessinerVolees(t / 1000); dessinerPluie(); dessinerBullesEtude(t / 1000); }
     dessinerBulleA(t / 1000);
     W = WS; H = HS;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -3926,7 +4743,7 @@
   var bulles = [];              // petits textes « +1 »
   var ICONE_PIERRE = '<svg viewBox="0 0 24 24"><ellipse cx="13" cy="15" rx="7.5" ry="5.2" transform="rotate(12 13 15)" fill="#a9a39a" stroke="#4a2a1a" stroke-width="1.5"/><ellipse cx="7" cy="17" rx="3.6" ry="2.6" fill="#c2b39c" stroke="#4a2a1a" stroke-width="1.3"/><ellipse cx="10.5" cy="12.8" rx="2.6" ry="1.3" transform="rotate(12 10.500 12.800)" fill="#fff" opacity=".55"/></svg>';
   var ICONES = {};
-  var NOMS = { pierre: 'Pierre', pierre_aiguisee: 'Pierre aiguisée', pierre_abimee: 'Pierre abîmée', pierre_tres_abimee: 'Pierre très abîmée', poussiere: 'Poussière de pierre', ecorce: 'Écorce', bois: 'Morceau de bois', herbe: 'Brins d\'herbe', ficelle: 'Ficelle', branche: 'Branche', manche: 'Manche', massue: 'Massue', hache: 'Hache', pomme: 'Pomme', mandarine: 'Mandarine', corde: 'Corde', ceinture: 'Ceinture rudimentaire' };
+  var NOMS = { pierre: 'Pierre', pierre_aiguisee: 'Pierre aiguisée', pierre_abimee: 'Pierre abîmée', poussiere: 'Poussière de pierre', ecorce: 'Écorce', bois: 'Morceau de bois', herbe: 'Brins d\'herbe', ficelle: 'Ficelle', branche: 'Branche', manche: 'Manche', massue: 'Massue', hache: 'Hache', pomme: 'Pomme', mandarine: 'Mandarine', corde: 'Corde', ceinture: 'Ceinture rudimentaire' };
   Object.keys(NOMS).forEach(function (id) { ICONES[id] = '<img src="' + IMAGES[id] + '" alt="" draggable="false">'; });
 
   var elPoches = document.getElementById('poches'), elSol = document.getElementById('sol');
@@ -3966,6 +4783,7 @@
       hs += '<div class="objetSol' + (flash === 's' + o.uid ? ' nouveau' : '') + (atelier && !atelier.r.transforme && atelier.r.anim !== 'tailler' && atelier.uids.indexOf(o.uid) >= 0 ? ' fusion' : '') + '" data-uid="' + o.uid + '" data-nom="' + NOMS[o.id] + '" style="left:' + o.x + 'px;top:' + o.y + 'px">' + ICONES[o.id] + '</div>';
     });
     elSol.innerHTML = hs;
+    var bTP = document.getElementById('toutPrendre'); if (bTP) bTP.disabled = !sol.length;
     majFabrication();
   }
 
@@ -4010,7 +4828,7 @@
   // Quand les ingrédients d'une recette sont réunis dans la zone Sol (et l'outil en main si besoin),
   // la fabrication démarre toute seule, avec son animation, ici et sur le personnage.
   // Déplacer un ingrédient, changer l'objet en main ou fermer l'inventaire l'interrompt.
-  var MARTEAUX = { pierre: 1, pierre_aiguisee: 1, pierre_abimee: 1, pierre_tres_abimee: 1, massue: 1 };
+  var MARTEAUX = { pierre: 1, pierre_abimee: 1, massue: 1 };   // la pierre aiguisée ne sert pas à taper
   var RECETTES = [
     { id: 'hache', nom: 'Hache', ingr: { manche: 1, ficelle: 1, pierre_aiguisee: 1 }, anim: 'nouer', duree: 3.4, sortie: 'hache',
       aide: 'Coupe les arbres (E près d\'un tronc).' },
@@ -4024,10 +4842,8 @@
     { id: 'manche_branche', nom: 'Manche taillé', ingr: { branche: 1 }, outil: { pierre_aiguisee: 1 }, anim: 'tailler', duree: 3, sortie: 'manche' },
     { id: 'aiguiser', nom: 'Pierre aiguisée', ingr: { pierre: 1 }, outil: MARTEAUX, anim: 'frapper', duree: 3,
       transforme: { pierre: 'pierre_abimee' }, outilDevient: { pierre: 'pierre_aiguisee' }, icone: 'pierre_aiguisee' },
-    { id: 'abimer', nom: 'Pierre très abîmée', ingr: { pierre_abimee: 1 }, outil: MARTEAUX, anim: 'frapper', duree: 3,
-      transforme: { pierre_abimee: 'pierre_tres_abimee' }, icone: 'pierre_tres_abimee' },
-    { id: 'poudre', nom: 'Poussière de pierre', ingr: { pierre_tres_abimee: 1 }, outil: MARTEAUX, anim: 'frapper', duree: 3,
-      transforme: { pierre_tres_abimee: 'poussiere' }, icone: 'poussiere' }
+    { id: 'abimer', nom: 'Poussière de pierre', ingr: { pierre_abimee: 1 }, outil: MARTEAUX, anim: 'frapper', duree: 3,
+      transforme: { pierre_abimee: 'poussiere' }, icone: 'poussiere' }
   ];
   var MAIN_SVG = '<svg viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6cf"/><stop offset="1" stop-color="#f1b48d"/></linearGradient></defs><g stroke="#4a2a1a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M11 31C8.500 24 9 16 12 12.500L12.800 6.200a2.300 2.300 0 0 1 4.600.300L17.200 13 18 4.600a2.300 2.300 0 0 1 4.600.200L22.400 13 23.400 6a2.300 2.300 0 0 1 4.500.600L27.200 14.300 28.800 9.800a2.100 2.100 0 0 1 4 1.200L31 21C30.500 28.500 26.500 33.500 19.500 33.500 15 33.500 12.200 32.700 11 31Z" fill="url(#gm)"/><path d="M11.500 22.500C7.500 21 4.800 18.300 6.500 16.200 8.200 14.300 11 16.500 12.500 18.500" fill="url(#gm)"/></g><path d="M15 26.500C18 28.300 22.500 28.300 25.500 25.500M17 14.500V19M22 14V18.500" stroke="#e29f78" stroke-width="1.600" fill="none" stroke-linecap="round"/><ellipse cx="17" cy="10" rx="1.300" ry="2.200" fill="#fff" opacity=".55"/></svg>';
   var elEffets = document.getElementById('solEffets');
@@ -4118,8 +4934,12 @@
     });
     // Impacts : éclats et petite secousse
     var anime = elEffets.querySelector('.frappeur, .tailleur, .mainAnim');
+    var sonA = { frapper: 'pierre', tailler: 'gratte', frotter: 'frotte', nouer: 'corde', tresser: 'corde' }[r.anim];
+    var retardS = r.anim === 'frapper' ? 0.35 : 0.1;
+    if (sonA) SON.jouer(sonA, retardS);
     if (anime) anime.addEventListener('animationiteration', function () {
       if (!atelier) return;
+      if (sonA) SON.jouer(sonA, retardS);
       if (r.anim === 'frapper') {
         var el = elSol.querySelector('[data-uid="' + c0.uid + '"]');
         if (el) { el.classList.remove('secoue'); void el.offsetWidth; el.classList.add('secoue'); }
@@ -4163,6 +4983,8 @@
   }, 60);
   function terminerAtelier() {
     var a = atelier, r = a.r, texte, flash;
+    if (r.anim === 'nouer' || r.anim === 'tresser') SON.jouer('serre');
+    SON.jouer('fini', 0.12);
     if (r.transforme) {
       var k = trouverSol(a.cible.uid), cible = sol[k];
       texte = NOMS[r.transforme[cible.id]] + ' !';
@@ -4218,8 +5040,7 @@
   var INDICES = {
     pierre: { dit: 'Bien dure… ça pourrait servir.', d: ['Bien dure.'], l: [{ t: 'Si je la frappe contre une autre pierre, il pourrait se passer quelque chose…', r: 'aiguiser' }, { t: 'Au bout de quelque chose de long, elle ferait un sacré coup.', r: 'massue' }] },
     pierre_aiguisee: { dit: 'Ça coupe !', d: ['Son bord est tranchant : je peux sûrement couper des choses, comme de l\'herbe… ou les arbres.'], l: [{ t: 'Elle pourrait tailler du bois.', r: 'manche_branche' }, { t: 'Fixée au bout de quelque chose, elle couperait encore mieux.', r: 'hache' }] },
-    pierre_abimee: { dit: 'Elle s\'effrite…', d: ['Elle s\'effrite.'], l: [{ t: 'Si je continue à taper dessus…', r: 'abimer' }] },
-    pierre_tres_abimee: { dit: 'Presque en miettes.', d: ['Presque en miettes.'], l: [{ t: 'Encore un coup et il n\'en restera rien.', r: 'poudre' }] },
+    pierre_abimee: { dit: 'Elle s\'effrite…', d: ['Elle s\'effrite.'], l: [{ t: 'Encore un coup et il n\'en restera rien.', r: 'abimer' }] },
     poussiere: { dit: 'Une poudre très fine…', d: ['Une poudre très fine. Je ne sais pas encore à quoi elle sert.'], l: [] },
     herbe: { dit: 'C\'est souple…', d: ['Des brins souples.'], l: [{ t: 'En les tressant, j\'obtiendrais peut-être quelque chose.', r: 'ficelle' }] },
     ficelle: { dit: 'Ça attache bien !', d: ['Ça peut attacher des choses entre elles.'], l: [{ t: 'Avec beaucoup de ficelle, je pourrais faire plus solide…', r: 'corde' }, { t: 'Avec du bois, ça ferait un bon lien.', r: 'manche' }] },
@@ -4571,6 +5392,19 @@
     if (!elCarnet.classList.contains('ouvert')) basculerCarnet(true);
   });
   elCarnet.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { basculerCarnet(!elCarnet.classList.contains('ouvert')); e.preventDefault(); } });
+  document.getElementById('toutPrendre').addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (!sol.length) return;
+    arreterAtelier();
+    var pris = {}, restent = [];
+    sol.forEach(function (o) { if (ajouterObjet(o.id, 1)) restent.push(o); else pris[o.id] = (pris[o.id] || 0) + 1; });
+    sol = restent;
+    Object.keys(pris).forEach(function (k) { bulles.push({ texte: '+' + pris[k] + ' ' + NOMS[k].toLowerCase(), age: 0, vie: 1.3 }); });
+    if (restent.length) parler('Plus de place pour tout…');
+    if (Object.keys(pris).length) SON.jouer('fini');
+    sigSol = sol.map(function (o) { return o.id; }).sort().join(',');
+    majInventaire();
+  });
   document.getElementById('plierSol').addEventListener('click', function () {
     var plie = elSol.closest('.blocSol').classList.toggle('plie');
     this.setAttribute('aria-expanded', plie ? 'false' : 'true');
@@ -4777,6 +5611,7 @@
       if (k.coups < 3 && k.t >= k.coups * 0.6 + 0.42) {
         // Impact
         k.coups++;
+        SON.jouer(k.type === 'arbre' ? 'bois' : 'rocher');
         secousses.set(cle2, performance.now() / 1000);
         var px = k.c.wx - (k.c.wx - joueur.x) * 0.45, py = k.c.wy - (k.c.wy - joueur.y) * 0.45;
         for (var n = 0; n < 7; n++) copeaux.push({ x: px + (Math.random() - 0.5) * 0.2, y: py, z: k.type === 'arbre' ? 0.5 + Math.random() * 0.2 : 0.3 + Math.random() * 0.3,
@@ -4868,6 +5703,7 @@
       g.t += dt;
       var ang = Math.atan2(g.c.wy - joueur.y, g.c.wx - joueur.x);
       joueur.ang += Math.atan2(Math.sin(ang - joueur.ang), Math.cos(ang - joueur.ang)) * Math.min(1, dt * 12);
+      g.son = (g.son || 0) - dt; if (g.son <= 0) { g.son = 0.17; SON.jouer('gratte'); }
       if (Math.random() < dt * 14) copeaux.push({ x: g.c.wx - (g.c.wx - joueur.x) * 0.45 + (Math.random() - 0.5) * 0.15, y: g.c.wy - (g.c.wy - joueur.y) * 0.45, z: 0.55 + Math.random() * 0.3, vz: 0.6 + Math.random(), vie: 0.7, vx: (Math.random() - 0.5) * 0.8, vy: (Math.random() - 0.5) * 0.8 });
       if (g.t >= g.duree) {
         var k = g.c.gx + ',' + g.c.gy;
@@ -4916,6 +5752,7 @@
     var coup = Math.floor(f.t / 0.25);
     if (coup !== f.dernier && f.t % 0.25 > 0.12) {
       f.dernier = coup;
+      SON.jouer('herbe');
       for (var n = 0; n < 8; n++) copeaux.push({ x: f.c.wx + (Math.random() - 0.5) * 0.4, y: f.c.wy + (Math.random() - 0.5) * 0.4, z: 0.05 + Math.random() * 0.12,
         vz: 0.8 + Math.random() * 0.8, vie: 0.6, vx: (Math.random() - 0.5) * 1.6, vy: (Math.random() - 0.5) * 1.6, col: Math.random() < 0.5 ? '#6fb043' : '#9bd060' });
     }
